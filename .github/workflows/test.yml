@@ -19,6 +19,9 @@ jobs:
           channel: stable
           flutter-version: 3.3.4
 
+      - name: Upgrade Flutter
+        run: flutter upgrade
+
       - name: Install dependencies
         run: flutter pub get
 
