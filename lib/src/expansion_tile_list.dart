@@ -170,7 +170,8 @@ class ExpansionTileList extends StatefulWidget {
 class _ExpansionTileListState extends State<ExpansionTileList> {
   late final ExpansionTileListController _listController;
   late final List<ExpansionTile> _children;
-  bool _isExpansionChanging = false;
+
+  //bool _isExpansionChanging = false;
 
   @override
   void initState() {
@@ -279,7 +280,7 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
     if (!isExpanded) {
       return;
     }
-    _isExpansionChanging = true;
+    //_isExpansionChanging = true;
     if (widget.expansionType.isSingleExpansion) {
       Future.microtask(() {
         for (int i = 0; i < _children.length; i++) {
@@ -287,7 +288,7 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
             _children[i].controller?.collapse();
           }
         }
-        _isExpansionChanging = false;
+        //_isExpansionChanging = false;
       });
     }
   }

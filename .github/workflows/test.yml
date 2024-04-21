@@ -13,11 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.3
+
       - name: Setup Flutter SDK
-        uses: subosito/flutter-action@v2
+        uses: flutter-actions/setup-flutter@v3
         with:
           channel: stable
-          flutter-version: 3.3.4
+          version: 3.3.4
 
       - name: Upgrade Flutter
         run: flutter upgrade
