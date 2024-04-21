@@ -238,7 +238,6 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   /// If the children are the same, the old expansion tiles are reused.
   /// If the children are different, the expansion tiles are updated.
   void _updateExpansionTiles([List<ExpansionTile>? children]) {
-    print("object= $this");
     ExpansionTile createChildAt(int index) {
       var controller =
           widget.children[index].controller ?? ExpansionTileController();
