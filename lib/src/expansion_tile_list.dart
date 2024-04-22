@@ -145,12 +145,12 @@ class ExpansionTileList extends StatefulWidget {
   List<int> get initialExpandedIndexes => expansionType.isMultipleExpansion
       ? (_initialExpandedIndexes.isNotEmpty
           ? _initialExpandedIndexes
-          : (_initialExpandedIndex != null ? [_initialExpandedIndex] : []))
+          : (_initialExpandedIndex != null ? [_initialExpandedIndex!] : []))
       : (_initialExpandedIndex == null
           ? (_initialExpandedIndexes.isNotEmpty
               ? [_initialExpandedIndexes[0]]
               : [])
-          : [_initialExpandedIndex]);
+          : [_initialExpandedIndex!]);
 
   /// Creates the mutable state for this widget at a given location in the tree.
   ///

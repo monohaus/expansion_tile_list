@@ -1,9 +1,6 @@
-Sure, here's an updated version of the README with an 'Example' section added below 'Usage':
-
-```markdown
 # Expansion Tile List
 
-This project is a Flutter package that provides an extension to the `ExpansionTile` class with a `copyWith` method.
+This project is a Flutter package that provides an container to the `ExpansionTile` widget.
 
 ## Description
 
@@ -75,7 +72,7 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-In this example, we create a simple `ExpansionTileList` with two children.
+In this example, we created a simple `ExpansionTileList` with two children.
 
 ## Testing
 
