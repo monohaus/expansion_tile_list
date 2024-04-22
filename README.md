@@ -5,13 +5,14 @@ This project is a Flutter package that provides an container to the `ExpansionTi
 ## Description
 
 The `ExpansionTileList` serves as a container for `ExpansionTile` widgets. It provides an easy way to create a list of items that can be expanded or collapsed to show or hide additional information.
+![expansion_tile_list](.assets%2Fimages%2Fexpansion_tile_list.gif)
 
 ## Features
 
-- Extension of `ExpansionTile` class with a `copyWith` method.
-- Customizable properties for `ExpansionTile`.
 - The `builder` property allows the customization of the creation of each tile in the `ExpansionTileList`.
 - The `tileGapSize` property allows you to specify the size of the gap between each tile in the `ExpansionTileList`.
+- Expand at most one Tile at a time. 
+- Extension of `ExpansionTile` class with a `copyWith` method.
 
 ## Installation
 
