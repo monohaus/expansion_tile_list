@@ -4,19 +4,23 @@ This project is a Flutter package that provides an container to the `ExpansionTi
 
 ## Description
 
-The `ExpansionTileList` serves as a container for `ExpansionTile` widgets. It provides an easy way to create a list of items that can be expanded or collapsed to show or hide additional information.
-![expansion_tile_list](.assets%2Fimages%2Fexpansion_tile_list.gif)
+The `ExpansionTileList` serves as a container for `ExpansionTile` widgets. It provides an easy way to create a list of
+items that can be expanded or collapsed to show or hide additional information.
+<p style="text-align: center">
+  <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list">
+</p>
 
 ## Features
 
 - The `builder` property allows the customization of the creation of each tile in the `ExpansionTileList`.
 - The `tileGapSize` property allows you to specify the size of the gap between each tile in the `ExpansionTileList`.
-- Expand at most one Tile at a time. 
+- Expand at most one Tile at a time.
 - Extension of `ExpansionTile` class with a `copyWith` method.
 
 ## Installation
 
-To use this package, add `expansion_tile_list` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
+To use this package, add `expansion_tile_list` as
+a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
 ```yaml
 dependencies:
@@ -85,9 +89,11 @@ flutter test
 
 ## Contributing
 
-Contributions are welcome! If you find a bug or want a feature, please fill an issue. If you want to contribute code, please submit a pull request.
+Contributions are welcome! If you find a bug or want a feature, please fill an issue. If you want to contribute code,
+please submit a pull request.
 
 ## License
 
 This project is licensed under the BSD-style license. See the [LICENSE](LICENSE) file for details.
+
 ```
