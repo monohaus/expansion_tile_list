@@ -257,8 +257,9 @@ double _getTransformRotation(Transform transform) {
   return atan2(val[1], val[0]);
 }
 
-void edgeCaseTests(){
-  testWidgets('ExpansionTileList handles being empty', (WidgetTester tester) async {
+void edgeCaseTests() {
+  testWidgets('ExpansionTileList handles being empty',
+      (WidgetTester tester) async {
     // Build an empty ExpansionTileList
     await tester.pumpWidget(
       const MaterialApp(
@@ -274,7 +275,8 @@ void edgeCaseTests(){
     expect(find.byType(ExpansionTile), findsNothing);
   });
 
-  testWidgets('ExpansionTileListController handles invalid indices gracefully', (WidgetTester tester) async {
+  testWidgets('ExpansionTileListController handles invalid indices gracefully',
+      (WidgetTester tester) async {
     final controller = ExpansionTileListController();
     await tester.pumpWidget(
       MaterialApp(
@@ -283,10 +285,10 @@ void edgeCaseTests(){
             controller: controller,
             children: List<ExpansionTile>.generate(
                 3,
-                    (int index) => ExpansionTile(
-                  title: Text('Item $index'),
-                  children: [Text('Item $index body')],
-                )),
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
           ),
         ),
       ),
