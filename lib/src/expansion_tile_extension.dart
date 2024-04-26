@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 
+/// An extension method for enhancing the functionality of [ExpansionTile].
+///
+/// This extension allows you to create a copy of an existing [ExpansionTile]
+/// with specific modifications.
 extension ExpansionTileExtension on ExpansionTile {
+  /// Creates a new [ExpansionTile] by copying the properties from the original
+  /// [ExpansionTile] and applying optional modifications.
+  ///   If not provided, it uses the default style.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final modifiedTile = originalTile.copyWith(
+  ///   title: Text('Custom Title'),
+  ///   children: [Text('Custom Content')],
+  /// );
+  /// ```
   ExpansionTile copyWith({
     Key? key,
     Widget? leading,

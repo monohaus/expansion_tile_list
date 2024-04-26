@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:expansion_tile_list/expansion_tile_list.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +9,14 @@ import 'expansion_tile_extension.dart';
 /// expanded or collapsed.
 ///
 /// The position of the panel within an [ExpansionTileList] is given by
-/// [tileIndex].
-typedef ExpansionTileCallback = void Function(int tileIndex, bool isExpanded);
+/// [index]. The [isExpanded] parameter is true if the tile was expanded, and
+/// [isExpanded]. The [isExpanded] parameter is true if the tile was expanded, and false if it was collapsed.
+typedef ExpansionTileCallback = void Function(int index, bool isExpanded);
+
+/// This typedef represents a function that takes a [BuildContext], an index, a generic value of type [T], and an optional child widget.
+/// It returns a [Widget]. This function can be used to build widgets based on the index and value in a list or collection.
+typedef IndexedValueWidgetBuilder<T> = Widget Function(
+    BuildContext context, int index, T value, Widget? child);
 
 /// Enum representing the expansion behavior of the [ExpansionTileList].
 ///
@@ -17,9 +25,20 @@ typedef ExpansionTileCallback = void Function(int tileIndex, bool isExpanded);
 /// - [exactlyOne]: Exactly one tile in the list should be expanded.
 /// - [any]: Any number of tiles in the list can be expanded
 enum ExpansionType {
+  /// Indicates that at least one tile in the list should be expanded.
+  /// If all tiles are collapsed, one will automatically be expanded.
   atLeastOne,
+
+  /// Indicates that at most one tile in the list can be expanded at a time.
+  /// If a tile is expanded while another tile is already expanded, the first tile will be collapsed.
   atMostOne,
+
+  /// Indicates that exactly one tile in the list should be expanded at any time.
+  /// If a tile is expanded while another tile is already expanded, the first tile will be collapsed.
+  /// If the expanded tile is collapsed, another tile will automatically be expanded.
   exactlyOne,
+
+  /// Indicates that any number of tiles in the list can be expanded at the same time.
   any;
 
   /// Returns true if the expansion type allows multiple tiles to be expanded.
@@ -51,17 +70,22 @@ enum ExpansionType {
 /// The [builder] can be used to customize the appearance of the tiles.
 ///
 /// The [controller] can be used to programmatically control the expansion of the tiles.
+
 class ExpansionTileList extends StatefulWidget {
   const ExpansionTileList._({
     super.key,
+    this.trailing,
+    this.trailingAnimation,
+    this.trailingAnimationEnabled = true,
+    this.trailingAnimationBuilder,
+    this.controller,
+    this.builder,
     required this.children,
     required this.expansionType,
+    this.onExpansionChanged,
     List<int> initialExpandedIndexes = const <int>[],
     int? initialExpandedIndex,
-    this.onExpansionChanged,
     this.tileGapSize = 0.0,
-    this.builder,
-    this.controller,
   })  : assert(tileGapSize >= 0.0,
             'Error: Please set the tileGapSize of ExpansionTileList must be >= 0'),
         assert(
@@ -79,6 +103,10 @@ class ExpansionTileList extends StatefulWidget {
   /// Creates a list of [ExpansionTile]s that can have any number of tiles expanded at once.
   const ExpansionTileList({
     Key? key,
+    Widget? trailing,
+    Animatable<double>? trailingAnimation,
+    bool trailingAnimationEnabled = true,
+    IndexedValueWidgetBuilder<double>? trailingAnimationBuilder,
     required List<ExpansionTile> children,
     List<int> initialExpandedIndexes = const <int>[],
     ExpansionTileCallback? onExpansionChanged,
@@ -87,6 +115,10 @@ class ExpansionTileList extends StatefulWidget {
     ExpansionTileListController? controller,
   }) : this._(
           key: key,
+          trailing: trailing,
+          trailingAnimation: trailingAnimation,
+          trailingAnimationEnabled: trailingAnimationEnabled,
+          trailingAnimationBuilder: trailingAnimationBuilder,
           children: children,
           expansionType: ExpansionType.any,
           initialExpandedIndexes: initialExpandedIndexes,
@@ -99,6 +131,10 @@ class ExpansionTileList extends StatefulWidget {
   /// Creates a list of [ExpansionTile]s that can have at least one tile expanded at all times.
   const ExpansionTileList.radio({
     Key? key,
+    Widget? trailing,
+    Animatable<double>? trailingAnimation,
+    bool trailingAnimationEnabled = true,
+    IndexedValueWidgetBuilder<double>? trailingAnimationBuilder,
     required List<ExpansionTile> children,
     int? initialExpandedIndex,
     ExpansionTileCallback? onExpansionChanged,
@@ -107,6 +143,10 @@ class ExpansionTileList extends StatefulWidget {
     ExpansionTileListController? controller,
   }) : this._(
           key: key,
+          trailing: trailing,
+          trailingAnimation: trailingAnimation,
+          trailingAnimationEnabled: trailingAnimationEnabled,
+          trailingAnimationBuilder: trailingAnimationBuilder,
           children: children,
           expansionType: ExpansionType.atMostOne,
           initialExpandedIndex: initialExpandedIndex,
@@ -134,6 +174,28 @@ class ExpansionTileList extends StatefulWidget {
   /// A controller that can be used to programmatically control the expansion of the tiles.
   final ExpansionTileListController? controller;
 
+  /// The widget that is displayed at the end of each tile header.
+  final Widget? trailing;
+
+  /// The animation for the trailing widget of the tiles.
+  final Animatable<double>? trailingAnimation;
+
+  /// Whether the trailing animation is enabled.
+  /// If true, the trailing widget of the tiles is animated.
+  final bool trailingAnimationEnabled;
+
+  /// The builder for the trailing animation of the tiles.
+  /// If null, the default animation is used.
+  /// The default animation rotates the trailing widget by 180 degrees.
+  /// The default animation can be customized by providing a custom builder.
+  /// The custom builder can be used to create more complex animations.
+  /// The custom builder takes an [IndexedValueWidgetBuilder] as a parameter.
+  /// The [IndexedValueWidgetBuilder] takes a [BuildContext], an index, a value, and a child widget.
+  /// It returns a [Widget].
+  /// The [IndexedValueWidgetBuilder] can be used to build widgets based on the index and value in a list or collection.
+  /// The custom builder can be used to create animations that depend on the index and value of the tiles.
+  final IndexedValueWidgetBuilder<double>? trailingAnimationBuilder;
+
   /// The indexes of the tiles that are initially expanded. If empty, no tiles are initially expanded.
   /// For multiple: [ExpansionType.any] , [ExpansionType.atLeastOne].
   final List<int> _initialExpandedIndexes;
@@ -142,6 +204,14 @@ class ExpansionTileList extends StatefulWidget {
   /// For single: [ExpansionType.exactlyOne] , [ExpansionType.atMostOne].
   final int? _initialExpandedIndex;
 
+  /// Returns the indexes of the tiles that are initially expanded.
+  /// The behavior depends on the expansion type:
+  /// - For multiple expansion types ([ExpansionType.any] or [ExpansionType.atLeastOne]),
+  ///   it returns the list of initial expanded indexes if it's not empty,
+  ///   otherwise it returns the list containing the initial expanded index if it's not null.
+  /// - For single expansion types ([ExpansionType.exactlyOne] or [ExpansionType.atMostOne]),
+  ///   it returns the list containing the first index from the initial expanded indexes if it's not empty,
+  ///   otherwise it returns the list containing the initial expanded index if it's not null.
   List<int> get initialExpandedIndexes => expansionType.isMultipleExpansion
       ? (_initialExpandedIndexes.isNotEmpty
           ? _initialExpandedIndexes
@@ -167,26 +237,59 @@ class ExpansionTileList extends StatefulWidget {
 /// It maintains the state of the expansion tiles in the list, such as which tiles are expanded.
 ///
 /// This class is private to the library as it starts with an underscore.
-class _ExpansionTileListState extends State<ExpansionTileList> {
+class _ExpansionTileListState extends State<ExpansionTileList>
+    with TickerProviderStateMixin<ExpansionTileList> {
   late final ExpansionTileListController _listController;
   late final List<ExpansionTile> _children;
 
-  //bool _isExpansionChanging = false;
+  /// The animation controllers for the trailing widgets of the tiles.
+  late final Map<int, AnimationController> _animationControllers;
+  late final Map<int, Animation<double>> _trailingAnimations;
+  static final Animatable<double> _easeInTween =
+      CurveTween(curve: Curves.easeIn);
+  static final Animatable<double> _halfTween =
+      Tween<double>(begin: 0.0, end: pi);
+
+  AnimationController _animationControllerAt(int index) {
+    return _animationControllers.putIfAbsent(index, () {
+      return AnimationController(
+          vsync: this,
+          duration: widget.children[index].expansionAnimationStyle?.duration ??
+              Durations.short4);
+    });
+  }
+
+  Animation<double> _trailingAnimationAt(int index) {
+    return _trailingAnimations.putIfAbsent(
+        index,
+        () => _animationControllerAt(index)
+            .drive(widget.trailingAnimation ?? _halfTween.chain(_easeInTween)));
+  }
 
   @override
   void initState() {
     super.initState();
     _children = [];
-    _updateExpansionTiles();
     assert(widget.controller?._state == null);
     _listController = widget.controller ?? ExpansionTileListController();
     _listController._state = this;
+    //
+    _animationControllers = <int, AnimationController>{};
+    _trailingAnimations = <int, Animation<double>>{};
+    _updateChildren();
   }
 
   @override
   void didUpdateWidget(ExpansionTileList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateExpansionTiles(oldWidget.children);
+    if (oldWidget.trailing != widget.trailing ||
+        oldWidget.trailingAnimationEnabled != widget.trailingAnimationEnabled ||
+        oldWidget.trailingAnimation != widget.trailingAnimation ||
+        oldWidget.trailingAnimationBuilder != widget.trailingAnimationBuilder) {
+      _disposeAnimationControllers();
+    }
+    _updateChildren(oldWidget.children);
+    _updateAnimationDuration(Theme.of(context).expansionTileTheme);
   }
 
   @override
@@ -202,7 +305,14 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   void dispose() {
     _children.clear();
     _listController._state = null;
+    _disposeAnimationControllers();
     super.dispose();
+  }
+
+  void _disposeAnimationControllers() {
+    _animationControllers.forEach((_, controller) => controller.dispose());
+    _animationControllers.clear();
+    _trailingAnimations.clear();
   }
 
   /// Describes the part of the user interface represented by this widget.
@@ -233,39 +343,96 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
     });
   }
 
-  /// Updates the expansion tiles of the [ExpansionTileList].
+  /// Builds an [ExpansionTile] for a given index in the list of children.
+  ///
+  /// This method creates an [ExpansionTile] using the child at the given index. It assigns a controller to the tile,
+  /// sets its initial expanded state, and assigns a callback for when the tile's expansion state changes.
+  ///
+  /// The method also assigns a trailing widget to the tile. If the trailing animation is enabled, an [AnimatedBuilder]
+  /// is used to create the trailing widget with an animation. If the trailing animation is not enabled, the trailing
+  /// widget from the child at the given index is used.
+  ///
+  /// [index] is the index of the child in the list of children.
+  ///
+  ExpansionTile _buildChild(int index) {
+    var controller =
+        widget.children[index].controller ?? ExpansionTileController();
+    var oldController =
+        _children.length > index ? _children[index].controller : null;
+    Widget trailingAnimationBuilder() {
+      var trailingAnimation = _trailingAnimationAt(index);
+      return AnimatedBuilder(
+        animation: trailingAnimation,
+        builder: (context, child) {
+          return (widget.trailingAnimationBuilder ?? _defaultAnimationBuilder)
+              .call(context, index, trailingAnimation.value, child);
+        },
+        child: widget.trailing,
+      );
+    }
+
+    return widget.children[index].copyWith(
+        key: ObjectKey(controller),
+        controller: controller,
+        initiallyExpanded: oldController?.isExpanded ??
+            (widget.children[index].initiallyExpanded ||
+                widget.initialExpandedIndexes.contains(index)),
+        onExpansionChanged: (isExpanded) {
+          _updateExpansionChange(index, isExpanded);
+          widget.children[index].onExpansionChanged?.call(isExpanded);
+          widget.onExpansionChanged?.call(index, isExpanded);
+        },
+        trailing: widget.children[index].trailing ??
+            (widget.trailing != null && widget.trailingAnimationEnabled
+                ? trailingAnimationBuilder()
+                : widget.trailing ?? widget.children[index].trailing));
+  }
+
+  /// This is a helper method that creates a rotation animation for a widget.
+  ///
+  /// The method takes a [BuildContext], an index, a value representing the rotation angle, and a child widget.
+  /// It applies a rotation transformation to the child widget based on the provided value.
+  /// The rotation angle is calculated as the product of the value and pi, which results in a rotation in radians.
+  ///
+  /// [context] is the build context in which this widget is being constructed.
+  /// [index] is the index of the child in the list of children.
+  /// [value] is the value used to calculate the rotation angle.
+  /// [child] is the widget to which the rotation transformation is applied.
+  ///
+  /// Returns a [Transform] widget that applies a rotation transformation to the child widget.
+  Widget _defaultAnimationBuilder(
+      BuildContext context, int index, double value, Widget? child) {
+    return Transform.rotate(
+      angle: value,
+      child: child,
+    );
+  }
+
+  /// Updates the expansion tiles (children) of the [ExpansionTileList].
   ///
   /// Update the expansion tiles by comparing the old and new children.
   /// If the children are the same, the old expansion tiles are reused.
   /// If the children are different, the expansion tiles are updated.
-  void _updateExpansionTiles([List<ExpansionTile>? children]) {
-    ExpansionTile createChildAt(int index) {
-      var controller =
-          widget.children[index].controller ?? ExpansionTileController();
-      var oldController =
-          _children.length > index ? _children[index].controller : null;
-      return widget.children[index].copyWith(
-          key: ObjectKey(controller),
-          controller: controller,
-          initiallyExpanded: oldController?.isExpanded ??
-              (widget.children[index].initiallyExpanded ||
-                  widget.initialExpandedIndexes.contains(index)),
-          onExpansionChanged: (isExpanded) {
-            widget.children[index].onExpansionChanged?.call(isExpanded);
-            widget.onExpansionChanged?.call(index, isExpanded);
-            _updateExpansionChange(index, isExpanded);
-          });
-    }
-
+  void _updateChildren([List<ExpansionTile>? oldChildren]) {
     var tiles = List.generate(
         widget.children.length,
-        (index) => (children != null &&
-                children.length > index &&
-                children[index] == widget.children[index])
+        (index) => (oldChildren != null &&
+                oldChildren.length > index &&
+                oldChildren[index] == widget.children[index])
             ? _children[index]
-            : createChildAt(index));
+            : _buildChild(index));
     _children.clear();
     _children.addAll(tiles);
+  }
+
+  void _updateAnimationDuration(ExpansionTileThemeData expansionTileTheme) {
+    _animationControllers.forEach((index, controller) {
+      controller.duration =
+          widget.children[index].expansionAnimationStyle?.duration ??
+              expansionTileTheme.expansionAnimationStyle?.duration ??
+              controller.duration ??
+              Durations.short4;
+    });
   }
 
   /// Updates the expansion state of the tile at the given [index].
@@ -277,10 +444,16 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   /// [index] is the index of the tile in the list.
   /// [isExpanded] is the new expansion state of the tile.
   void _updateExpansionChange(int index, bool isExpanded) {
+    if (_animationControllers.length > index) {
+      isExpanded
+          ? _animationControllers[index]?.forward()
+          : _animationControllers[index]?.reverse();
+    }
+
     if (!isExpanded) {
       return;
     }
-    //_isExpansionChanging = true;
+    //_isExpanding = true;
     if (widget.expansionType.isSingleExpansion) {
       Future.microtask(() {
         for (int i = 0; i < _children.length; i++) {
@@ -288,7 +461,7 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
             _children[i].controller?.collapse();
           }
         }
-        //_isExpansionChanging = false;
+        // _isExpanding = false;
       });
     }
   }
@@ -349,10 +522,17 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
 /// Note: Before using these methods, make sure that the `ExpansionTileListController` is ready.
 /// If the controller is not ready, an assertion error will be thrown.
 class ExpansionTileListController {
+  /// Creates a new instance of the `ExpansionTileListController`.
   ExpansionTileListController();
 
   _ExpansionTileListState? _state;
 
+  /// Checks if the tile at the given index is expanded.
+  ///
+  /// This method returns `true` if the tile at the specified index is expanded, and `false` otherwise.
+  /// It throws an assertion error if the controller is not ready.
+  ///
+  /// [index] is the index of the tile in the `ExpansionTileList`.
   bool isExpanded(int index) {
     assert(_state != null, 'Error: ExpansionTileListController is not ready');
     return _state!._children.length > index &&

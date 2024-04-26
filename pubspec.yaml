@@ -4,9 +4,10 @@ description: >-
   An idea from ExpansionPanelList.
   This package tries to solve some simple drawback that ExpansionTile may have and 
   simplify the expansion and collapse action of ExpansionTile.
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/monohaus/expansion_tile_list
 repository: https://github.com/monohaus/expansion_tile_list
+issue_tracker: https://github.com/monohaus/expansion_tile_list/issues
 
 environment:
   sdk: '^3.0.0'
