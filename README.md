@@ -151,9 +151,9 @@ ExpansionTileList.radio(
 );
 ```
 
-## Parameters
+## Properties
 
-| Parameter                  | Description                                                                                                              | Default Value   |
+| Property                   | Description                                                                                                              | Default Value   |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------|-----------------|
 | `key`                      | The widget key.                                                                                                          | `null`          |
 | `children`                 | The list of ExpansionTile widgets that are managed by this widget.                                                       | `required`      |
