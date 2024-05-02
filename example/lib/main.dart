@@ -46,14 +46,14 @@ class App extends StatelessWidget {
   Widget _buildPage(BuildContext context) {
     return Expanded(
         child: PageView(
-          children: <Widget>[
-            Examples.buildBasicUsage(),
-            Examples.buildCustomExpansionCallback(),
-            Examples.buildCustomExpansionTile(),
-          ]
-              .map((child) => SingleChildScrollView(child: child))
-              .toList(growable: false),
-        ));
+      children: <Widget>[
+        Examples.buildBasicUsage(),
+        Examples.buildCustomExpansionCallback(),
+        Examples.buildCustomExpansionTile(),
+      ]
+          .map((child) => SingleChildScrollView(child: child))
+          .toList(growable: false),
+    ));
   }
 }
 
@@ -130,12 +130,12 @@ class Examples {
   static List<ExpansionTile> _buildChildren([String name = '']) {
     return List.generate(
         4,
-            (index) => ExpansionTile(
-          title: Text('Tile $index  $name'),
-          children: <Widget>[
-            ...List.generate(
-                6, (i) => Text('This is tile $index of $i $name')),
-          ],
-        ));
+        (index) => ExpansionTile(
+              title: Text('Tile $index  $name'),
+              children: <Widget>[
+                ...List.generate(
+                    6, (i) => Text('This is tile $index of $i $name')),
+              ],
+            ));
   }
 }
