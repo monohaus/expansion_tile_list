@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:expansion_tile_list/expansion_tile_list.dart';
 import 'package:flutter/material.dart';
@@ -140,6 +139,58 @@ void basicWidgetTests() {
     expect(find.text('Item 1 body'), findsNothing);
     expect(find.text('Item 2 body'), findsNothing);
   });
+
+  testWidgets(
+      'ExpansionTileList initialExpandedIndex and initialExpandedIndexes properties work correctly',
+      (WidgetTester tester) async {
+    // Define the test widget
+    const testWidget = MaterialApp(
+      home: Scaffold(
+        body: ExpansionTileList(
+          // initialExpandedIndex: 0,
+          initialExpandedIndexes: [0, 1],
+          children: <ExpansionTile>[
+            ExpansionTile(
+              title: Text('Tile 1'),
+              children: <Widget>[Text('Child 1')],
+            ),
+            ExpansionTile(
+              title: Text('Tile 2'),
+              children: <Widget>[Text('Child 2')],
+            ),
+            ExpansionTile(
+              title: Text('Tile 3'),
+              children: <Widget>[Text('Child 3')],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Build the test widget
+    await tester.pumpWidget(testWidget);
+
+    // Verify that the child widgets of the first and second tiles are visible initially
+    expect(find.text('Child 1'), findsOneWidget);
+    expect(find.text('Child 2'), findsOneWidget);
+
+    // Verify that the child widget of the third tile is not visible initially
+    expect(find.text('Child 3'), findsNothing);
+
+    // Tap on the first tile to collapse it
+    await tester.tap(find.text('Tile 1'));
+    await tester.pumpAndSettle();
+
+    // Verify that the child widget of the first tile is not visible after collapse
+    expect(find.text('Child 1'), findsNothing);
+
+    // Tap on the second tile to collapse it
+    await tester.tap(find.text('Tile 2'));
+    await tester.pumpAndSettle();
+
+    // Verify that the child widget of the second tile is not visible after collapse
+    expect(find.text('Child 2'), findsNothing);
+  });
 }
 
 void trailingAnimationTests() {
@@ -250,11 +301,85 @@ void trailingAnimationTests() {
     // Verify the transform widget is still not found after expansion..
     expect(rotateTransformTappedFinder, findsNothing);
   });
+
+  testWidgets(
+      'ExpansionTileList initialExpandedIndex, initialExpandedIndexes and trailing animation work correctly',
+      (WidgetTester tester) async {
+    // Define the test widget
+    const testWidget = MaterialApp(
+      home: Scaffold(
+        body: ExpansionTileList(
+          //initialExpandedIndex: 0,
+          initialExpandedIndexes: [0, 1],
+          trailing: Icon(Icons.arrow_drop_down),
+          children: <ExpansionTile>[
+            ExpansionTile(
+              title: Text('Tile 1'),
+              children: <Widget>[Text('Child 1')],
+            ),
+            ExpansionTile(
+              title: Text('Tile 2'),
+              children: <Widget>[Text('Child 2')],
+            ),
+            ExpansionTile(
+              title: Text('Tile 3'),
+              children: <Widget>[Text('Child 3')],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Build the test widget
+    await tester.pumpWidget(testWidget);
+
+    // Verify that the child widgets of the first and second tiles are visible initially
+    expect(find.text('Child 1'), findsOneWidget);
+    expect(find.text('Child 2'), findsOneWidget);
+
+    // Verify that the child widget of the third tile is not visible initially
+    expect(find.text('Child 3'), findsNothing);
+
+    final expansionTile = find.byType(ExpansionTile);
+    final tile1 =
+        find.ancestor(of: find.text('Tile 1'), matching: expansionTile);
+    final tile2 =
+        find.ancestor(of: find.text('Tile 2'), matching: expansionTile);
+    final tile3 =
+        find.ancestor(of: find.text('Tile 3'), matching: expansionTile);
+    // Verify the initial rotation angle of the trailing icon is 0
+    var tileInitialData = [
+      (tile: tile1, angle: pi),
+      (tile: tile2, angle: pi),
+      (tile: tile3, angle: 0),
+    ];
+    for (var i in tileInitialData) {
+      final Transform rotateTransform = tester.firstWidget(
+          find.descendant(of: i.tile, matching: find.byType(Transform)));
+      expect(_getTransformRotation(rotateTransform), i.angle);
+    }
+
+    for (final (i, item) in tileInitialData.indexed) {
+      // Tap on the first tile to collapse it or expand it
+      await tester.tap(find.text('Tile ${i + 1}'));
+      await tester.pumpAndSettle();
+
+      // Verify that the child widget  tile is not visible after collapse or visible after expand
+      expect(find.text('Child ${i + 1}'),
+          item.angle > 0 ? findsNothing : findsOneWidget);
+
+      // Verify the rotation angle of the trailing icon is pi after collapse or 0 after expand
+      final Transform rotateTransformTapped = tester.firstWidget(
+          find.descendant(of: item.tile, matching: find.byType(Transform)));
+      expect(_getTransformRotation(rotateTransformTapped),
+          item.angle > 0 ? 0 : pi);
+    }
+  });
 }
 
 double _getTransformRotation(Transform transform) {
-  final Float64List val = transform.transform.storage;
-  return atan2(val[1], val[0]);
+  final float64List = transform.transform.storage;
+  return atan2(float64List[1], float64List[0]);
 }
 
 void edgeCaseTests() {

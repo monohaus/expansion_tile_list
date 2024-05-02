@@ -247,22 +247,22 @@ class _ExpansionTileListState extends State<ExpansionTileList>
   late final Map<int, Animation<double>> _trailingAnimations;
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween =
-      Tween<double>(begin: 0.0, end: pi);
+  static final Tween<double> _halfTween = Tween<double>(begin: 0.0, end: pi);
 
-  AnimationController _animationControllerAt(int index) {
+  AnimationController _animationControllerAt(int index, [double? value]) {
     return _animationControllers.putIfAbsent(index, () {
       return AnimationController(
+          value: value,
           vsync: this,
           duration: widget.children[index].expansionAnimationStyle?.duration ??
               Durations.short4);
     });
   }
 
-  Animation<double> _trailingAnimationAt(int index) {
+  Animation<double> _trailingAnimationAt(int index, [double? value]) {
     return _trailingAnimations.putIfAbsent(
         index,
-        () => _animationControllerAt(index)
+        () => _animationControllerAt(index, value)
             .drive(widget.trailingAnimation ?? _halfTween.chain(_easeInTween)));
   }
 
@@ -359,8 +359,12 @@ class _ExpansionTileListState extends State<ExpansionTileList>
         widget.children[index].controller ?? ExpansionTileController();
     var oldController =
         _children.length > index ? _children[index].controller : null;
+    var initiallyExpanded = oldController?.isExpanded ??
+        (widget.children[index].initiallyExpanded ||
+            widget.initialExpandedIndexes.contains(index));
     Widget trailingAnimationBuilder() {
-      var trailingAnimation = _trailingAnimationAt(index);
+      var trailingAnimation = _trailingAnimationAt(
+          index, initiallyExpanded ? _halfTween.end : _halfTween.begin);
       return AnimatedBuilder(
         animation: trailingAnimation,
         builder: (context, child) {
@@ -374,9 +378,7 @@ class _ExpansionTileListState extends State<ExpansionTileList>
     return widget.children[index].copyWith(
         key: ObjectKey(controller),
         controller: controller,
-        initiallyExpanded: oldController?.isExpanded ??
-            (widget.children[index].initiallyExpanded ||
-                widget.initialExpandedIndexes.contains(index)),
+        initiallyExpanded: initiallyExpanded,
         onExpansionChanged: (isExpanded) {
           _updateExpansionChange(index, isExpanded);
           widget.children[index].onExpansionChanged?.call(isExpanded);

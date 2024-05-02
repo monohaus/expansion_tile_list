@@ -29,7 +29,7 @@ a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/pa
 dependencies:
   flutter:
     sdk: flutter
-  expansion_tile_list: ^0.1.0
+  expansion_tile_list: ^0.1.1
 ```
 
 ## Usage
