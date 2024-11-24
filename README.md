@@ -23,6 +23,17 @@ different expansion modes to suit various use cases.
   <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list">
 </p>
 
+<table style="border: none;">
+  <tr>
+    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true" alt="Basic Usage" title="Basic Usage" width="200"/></td>
+    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true" alt="Trailing" title="Trailing" width="200"/></td>
+  </tr>
+  <tr>
+    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true" alt="Controller" title="Controller" width="200"/></td>
+    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode" title="Expansion Mode" width="200"/></td>
+  </tr>
+</table>
+
 
 ## Features
 
@@ -517,3 +528,4 @@ We welcome contributions from everyone. Before you start:
 
 This project is licensed under the BSD-style license. See the [LICENSE](LICENSE) file for details.
 
+[list_basic_usage]: https://user-images.githubusercontent.com/15138747/208438575-8a9acded-1188-494e-9b01-9ac061c6d911.gif
