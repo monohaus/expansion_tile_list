@@ -61,6 +61,12 @@ class Examples {
   static Widget buildBasicUsage() {
     return ExpansionTileList(
       tileGapSize: 8.0,
+      separatorBuilder: (BuildContext context, int index) {
+        return const Divider(
+          height: 1.0,
+          color: Colors.red,
+        );
+      },
       children: <ExpansionTile>[
         ..._buildChildren('basic'),
       ],
@@ -87,7 +93,7 @@ class Examples {
       children: <ExpansionTile>[
         ..._buildChildren('builder'),
       ],
-      builder: (BuildContext context, int index, Widget? child) {
+      tileBuilder: (BuildContext context, int index, Widget? child) {
         return Column(
           children: <Widget>[
             child!,
@@ -98,6 +104,22 @@ class Examples {
               color: Colors.red,
             ),
           ],
+        );
+      },
+    );
+  }
+
+// With custom separator
+  static Widget buildWithCustomSeparator() {
+    return ExpansionTileList(
+      tileGapSize: 8.0,
+      children: <ExpansionTile>[
+        ..._buildChildren('separator'),
+      ],
+      separatorBuilder: (BuildContext context, int index) {
+        return const Divider(
+          height: 1.0,
+          color: Colors.red,
         );
       },
     );
@@ -119,7 +141,7 @@ class Examples {
     return ExpansionTileList(
       tileGapSize: 8.0,
       trailing: const Icon(Icons.add),
-      trailingAnimationEnabled: false,
+      enableTrailingAnimation: false,
       children: <ExpansionTile>[
         ..._buildChildren('trailingAnimation'),
       ],
