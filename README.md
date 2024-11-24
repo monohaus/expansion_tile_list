@@ -19,21 +19,10 @@ allows developers to create lists of expandable tiles with various customization
 control over the expansion state. The package supports features like global trailing widget, trailing animation, and
 different expansion modes to suit various use cases.
 
-<p style="text-align: center">
-  <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list">
-</p>
 
-<table style="border: none;">
-  <tr>
-    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true" alt="Basic Usage" title="Basic Usage" width="200"/></td>
-    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true" alt="Trailing" title="Trailing" width="200"/></td>
-  </tr>
-  <tr>
-    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true" alt="Controller" title="Controller" width="200"/></td>
-    <td style="border: none;"><img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode" title="Expansion Mode" width="200"/></td>
-  </tr>
-</table>
+<img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list">
 
+<img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true"  alt="Basic Usage"  title="Basic Usage"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="300"/>
 
 ## Features
 
@@ -52,7 +41,8 @@ All the features affects all the tiles in the `ExpansionTileList`.
 - `initialExpandedIndexes`  allows you to specify the indexes of the tiles that are initially expanded.
 - `controller` allows you to programmatically control the expansion of the tiles.
 - `onExpansionChanged`  allows you to listen to the expansion changes of the tiles.
-- ![new](https://img.shields.io/badge/new-brightgreen) `ExpansionMode` allows you to specify the expansion mode of the `ExpansionTileList`. This feature can be used only
+- ![new](https://img.shields.io/badge/new-brightgreen) `ExpansionMode` allows you to specify the expansion mode of the
+  `ExpansionTileList`. This feature can be used only
   with named constructor.
     - `ExpansionMode.atMostOne` allows you to expand at most one tile at a time. (i.e zero or one )
     - `ExpansionMode.atLeastOne` ensures that at least one tile is always expanded  (i.e one or more )
@@ -234,12 +224,12 @@ var expansionTileList = ExpansionTileList(
 
 
 /// Expand the first tile
-controller.expand(0);
+controller.expand
+(0);
 
 /// Collapse the first tilecontroller.collapse(0);
 /// Toggle the first tilecontroller.toggle(0);
-/// Expand all tiles
-controller.expandAll();
+/// Expand all tilescontroller.expandAll();
 
 /// Collapse all tiles
 controller.collapseAll();
@@ -347,6 +337,7 @@ var expansionTileList = ExpansionTileList(
    a list of tiles with either the `ExpansionMode.atMostOne` or `ExpansionMode.exactlyOne` expansion mode.
 
 ```dart
+
 var expansionTileList = ExpansionTileList.single(
   initialExpandedIndex: 0,
   children: <ExpansionTile>[
@@ -465,8 +456,9 @@ var expansionTileList = ExpansionTileList(
 
 - `tileGapSize` is the size of the gap between the tiles in the list.
 - `separatorBuilder` is the builder for the separator between the tiles in the list.
-Note: `tileGapSize` is always rendered before the `separatorBuilder` if both are specified.
+  Note: `tileGapSize` is always rendered before the `separatorBuilder` if both are specified.
 - Layout as follows:
+
 ```
 [ExpansionTile 1]
 [Gap]
@@ -477,23 +469,22 @@ Note: `tileGapSize` is always rendered before the `separatorBuilder` if both are
 [ExpansionTile 3]
 ```
 
-
 ## Properties
 
-| Property                   | Description                                                                                                              | Default Value       |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------|---------------------|
-| `key`                      | The widget key.                                                                                                          | `null`              |
-| `children`                 | The list of ExpansionTile widgets that are managed by this widget.                                                       | `required`          |
-| `onExpansionChanged`       | Called whenever a tile is expanded or collapsed.                                                                         | `null`              |
-| `tileGapSize`              | The size of the gap between the tiles in the list.                                                                       | `0.0`               |
-| `separatorBuilder`         | The builder for the separator between the tiles in the list.                                                             | `null`              |
-| `tileBuilder`              | A builder that can be used to customize the appearance of the tiles.                                                     | `null`              |
-| `controller`               | A controller that can be used to programmatically control the expansion of the tiles.                                    | `null`              |
-| `trailing`                 | The widget that is displayed at the end of each tile header. Can be overridden by `trailing` property of `ExpansionList` | `null`              |
-| `trailingAnimation`        | The animation for the trailing widget of the tiles. No effect of `trailing` property of `ExpansionList` if specified     | `null`              |
-| `enableTrailingAnimation`  | Enable or disable the trailing animation.                                                                                | `true`              |
-| `initialExpandedIndexes`   | The indexes of the tiles that are initially expanded.                                                                    | `const <int>[]`     |
-| `expansionMode`            | The expansion mode of the `ExpansionTileList`.                                                                           | `ExpansionMode.any` |
+| Property                  | Description                                                                                                              | Default Value       |
+|---------------------------|--------------------------------------------------------------------------------------------------------------------------|---------------------|
+| `key`                     | The widget key.                                                                                                          | `null`              |
+| `children`                | The list of ExpansionTile widgets that are managed by this widget.                                                       | `required`          |
+| `onExpansionChanged`      | Called whenever a tile is expanded or collapsed.                                                                         | `null`              |
+| `tileGapSize`             | The size of the gap between the tiles in the list.                                                                       | `0.0`               |
+| `separatorBuilder`        | The builder for the separator between the tiles in the list.                                                             | `null`              |
+| `tileBuilder`             | A builder that can be used to customize the appearance of the tiles.                                                     | `null`              |
+| `controller`              | A controller that can be used to programmatically control the expansion of the tiles.                                    | `null`              |
+| `trailing`                | The widget that is displayed at the end of each tile header. Can be overridden by `trailing` property of `ExpansionList` | `null`              |
+| `trailingAnimation`       | The animation for the trailing widget of the tiles. No effect of `trailing` property of `ExpansionList` if specified     | `null`              |
+| `enableTrailingAnimation` | Enable or disable the trailing animation.                                                                                | `true`              |
+| `initialExpandedIndexes`  | The indexes of the tiles that are initially expanded.                                                                    | `const <int>[]`     |
+| `expansionMode`           | The expansion mode of the `ExpansionTileList`.                                                                           | `ExpansionMode.any` |
 
 ## Testing
 
@@ -522,6 +513,7 @@ We welcome contributions from everyone. Before you start:
 6. Create a new pull request in GitHub and link the issue you are fixing.
 
 ## Visitors
+
 ![Visitor Count](https://profile-counter.glitch.me/expansion_tile_list/count.svg)
 
 ## License
