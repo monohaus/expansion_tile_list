@@ -23,10 +23,13 @@ typedef IndexedValueWidgetBuilder<T> = Widget Function(
 class ExpansionTileAnimation<T, BuilderFxn> {
   /// The animatable object to play the animation sequence.
   final Animatable<T> animate;
+
   /// The duration of the animation.
   final Duration? duration;
+
   /// The curve of the animation.
   final Curve? curve;
+
   /// The function that builds the widget based on the animation value.
   final BuilderFxn? builder;
 

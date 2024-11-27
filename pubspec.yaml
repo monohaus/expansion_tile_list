@@ -1,14 +1,23 @@
 name: expansion_tile_list
 description: >-
-  ExpansionTileList is a Flutter widget that manages a list of expandable tiles, controlling their expansion behaviour and also simplifies the implementation of common features.
+  Provides a highly customisable list of expansion tiles with extensive options for appearance, animations, and control over expansion behaviour, while simplifying common features.
 version: 1.0.0
 homepage: https://github.com/monohaus/expansion_tile_list
 repository: https://github.com/monohaus/expansion_tile_list
 issue_tracker: https://github.com/monohaus/expansion_tile_list/issues
+topics:
+  - widget
+  - expansion
+  - expansion-tile
+  - expansion-tile-list
+
+funding:
+  - https://buymeacoffee.com/seunogunji9
+
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=1.17.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:

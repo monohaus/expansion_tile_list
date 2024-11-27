@@ -1,8 +1,6 @@
 # Expansion Tile List
 
-The `ExpansionTileList` widget is a container for the `ExpansionTile` widget that allows you to create a list of tiles.
-It provides additional features that empowers you to customize the appearance of the tiles and control their expansion
-programmatically.
+The `ExpansionTileList` serves as a container for the `ExpansionTile` widget, enabling the creation of a list of tiles. It offers additional features that allow you to customize the appearance of the tiles and control their expansion programmatically.
 
 [![pub package](https://img.shields.io/pub/v/expansion_tile_list)](https://pub.dev/packages/expansion_tile_list)
 [![pub points](https://img.shields.io/pub/likes/expansion_tile_list)](https://pub.dev/packages/expansion_tile_list/score)
@@ -17,15 +15,10 @@ programmatically.
 
 ## Description
 
-The `expansion_tile_list` package provides a highly customizable list of expansion tiles for Flutter applications. It
-allows developers to create lists of expandable tiles with various customization options for appearance, animations, and
-control over the expansion state. The package supports features like global trailing widget, trailing animation, and
-different expansion modes to suit various use cases.
+The `expansion_tile_list` package offers a highly customizable list of expansion tiles for Flutter applications. It enables developers to create expandable tile lists with extensive options for appearance, animations, and control over the expansion behaviour. The package includes features such as a global trailing widget, trailing animation, and various expansion modes to accommodate different use cases.
+**Note** It is compatible with `ExpansionTile` widgets and provides additional features and flexibility when using `ExpansionTileItem` widget.
 
 Check out the [demo page](https://github.com/monohaus/expansion_tile_list_demo) to explore the latest features and experience the features firsthand!”
-
-
-<img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list" alt="expansion_tile_list">
 
 <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true"  alt="Basic Usage"  title="Basic Usage"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="300"/>
 ## Features
