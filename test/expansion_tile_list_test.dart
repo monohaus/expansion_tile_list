@@ -113,7 +113,7 @@ void basicWidgetTests() {
   });
 
   /// 'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
-  /*testWidgets(
+  testWidgets(
       'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
       (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -156,7 +156,7 @@ void basicWidgetTests() {
       find.ancestor(of: find.text('Tile 2'), matching: find.byKey(const ValueKey(1))),
     );
     expect(secondTileContainer.color, Colors.green);
-  });*/
+  });
 
   /*testWidgets(
       'ExpansionTileList can be created and responds to tap events (onExpansionChanged is called)',

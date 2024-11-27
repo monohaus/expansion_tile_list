@@ -28,6 +28,9 @@ jobs:
       - name: Upgrade Flutter
         run: flutter upgrade
 
+      - name: Install dependencies after upgrade
+        run: flutter pub upgrade --major-versions
+
       - name: Analyze project source
         run: dart analyze
 
