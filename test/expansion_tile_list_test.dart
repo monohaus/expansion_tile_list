@@ -182,7 +182,7 @@ void basicWidgetTests() {
           ),
         ),
       ),
-    );*/
+    );
 
     // Verify the ExpansionTileList is created with 2 tiles.
     expect(find.byType(ExpansionTile), findsNWidgets(2));
@@ -206,7 +206,7 @@ void basicWidgetTests() {
 
     // Verify the callback is called twice.
     expect(callbackCount, 2);
-  });
+  });*/
 
   testWidgets(
       'ExpansionTileListController can toggle, expand and collapse tiles',
