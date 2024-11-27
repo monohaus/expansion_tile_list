@@ -255,7 +255,7 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   @override
   void initState() {
     super.initState();
-    _initListController();
+    _updateListController(true);
     _updateExpandedIndexes();
     _updateTileControllers();
   }
@@ -264,12 +264,11 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   void didUpdateWidget(ExpansionTileList oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      _listController._state = null;
-      _initListController();
+      _updateListController();
     }
     if (widget.children != oldWidget.children ||
         listEquals(widget.children, oldWidget.children)) {
-      _updateTileControllers();
+      _updateTileControllers(oldWidget.children);
     }
     if (widget.expansionMode != oldWidget.expansionMode ||
         !listEquals(
@@ -288,7 +287,12 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
     super.didChangeDependencies();
   }
 
-  void _initListController() {
+  void _updateListController([bool init = false]) {
+    if (init && widget.controller != null) {
+      if (widget.controller?._state != null) {
+        //("ExpansionTileList controller already in use or this is an indicator that you should use a Global Key to manage widget state update rather than recreation");
+      }
+    }
     _listController = (widget.controller ?? ExpansionTileListController())
       .._state = this;
   }
@@ -298,14 +302,23 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   /// Update the expansion tiles by comparing the old and new children.
   /// If the children are the same, the old expansion tile controllers are reused.
   /// If the children are different, the expansion tile controllers are updated or recreated.
-  void _updateTileControllers() {
+  void _updateTileControllers([List<Widget> oldChildren = const []]) {
     var controllers = List.generate(widget.children.length, (index) {
-      return (_itemControllers.length > index &&
+      var canWidgetUpdate = (oldChildren.length > index
+          ? Widget.canUpdate(widget.children[index], oldChildren[index])
+          : false);
+      var isControllerEqual = _itemControllers.length > index &&
+          (_itemControllers[index] == widget.children[index].controller ||
               _itemControllers[index].delegate ==
-                  widget.children[index].controller &&
-              _itemControllers[index].mounted)
-          ? _itemControllers[index]
-          : ExpansionTileItemController(widget.children[index].controller);
+                  widget.children[index].controller);
+
+      if (canWidgetUpdate && isControllerEqual) {
+        return _itemControllers[index];
+      } else {
+        return widget.children[index].controller is ExpansionTileItemController
+            ? (widget.children[index].controller as ExpansionTileItemController)
+            : ExpansionTileItemController(widget.children[index].controller);
+      }
     });
     _itemControllers
       ..clear()
@@ -318,7 +331,9 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   /// After calling this method, the state object is considered unmounted.
   @override
   void dispose() {
-    _listController._state = null;
+    if (_listController._state == this) {
+      _listController._state = null;
+    }
     _itemControllers.clear();
     super.dispose();
   }
@@ -360,8 +375,6 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
   ExpansionTile _buildChild(int index) {
     var controller = _itemControllers[index];
     var enrichedExpansionTile = widget.children[index].copyWith(
-        key: widget.children[index].key,
-        // ?? ObjectKey(controller),
         controller: controller,
         initiallyExpanded: _initialExpandedIndexes.contains(index),
         onExpansionChanged: (isExpanded) =>
@@ -455,24 +468,12 @@ class _ExpansionTileListState extends State<ExpansionTileList> {
       _updateExpansionMode(_initialExpandedIndexes.firstOrNull ?? 0, true);
       return;
     }
+
+    //Note: ensure that the expansion mode is respected
+    //expandedIndexes will update once for single expansion mode [since the iterator updates its values on each iteration]
     for (var index in expandedIndexes) {
       _updateExpansionMode(index, true);
     }
-
-    /*for (int i = 0; i < _initialExpandedIndexes.length; i++) {
-      var index = _initialExpandedIndexes[i];
-      if (expandedIndexes.isEmpty || expandedIndexes.contains(index)) {
-        _updateExpansionMode(index, true);
-        print('c');
-        break;
-      }
-      if (i == _initialExpandedIndexes.length - 1) {
-        print('x');
-        _updateExpansionMode(
-            expandedIndexes.firstOrNull ?? _initialExpandedIndexes.first, true);
-        break;
-      }
-    }*/
   }
 
   /// Updates the expansion mode of the [ExpansionTileList].

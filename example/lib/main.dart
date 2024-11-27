@@ -136,8 +136,8 @@ class Examples {
     );
   }
 
-  // With custom trailing animation disabled
-  static Widget buildWithCustomTrailingAnimation() {
+  // With  trailing animation disabled
+  static Widget buildWithTrailingAnimationDisabled() {
     return ExpansionTileList(
       tileGapSize: 8.0,
       trailing: const Icon(Icons.add),

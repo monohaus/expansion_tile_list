@@ -8,9 +8,12 @@ programmatically.
 [![pub points](https://img.shields.io/pub/likes/expansion_tile_list)](https://pub.dev/packages/expansion_tile_list/score)
 [![pub points](https://img.shields.io/pub/points/expansion_tile_list)](https://pub.dev/packages/expansion_tile_list/score)
 [![popularity](https://img.shields.io/pub/popularity/expansion_tile_list)](https://pub.dev/packages/expansion_tile_list/score)
+[![Flutter Widget](https://img.shields.io/badge/Flutter-Widget-02569B?logo=flutter&logoColor=fff)](https://pub.dev/packages/expansion_tile_list)
 
-[![Flutter Widgets](https://img.shields.io/badge/Flutter-Widgets-blue)](https://pub.dev/packages/expansion_tile_group)
 [![Github](https://img.shields.io/badge/Github-ExpansionTileList-darkgreen)](https://github.com/monohaus/expansion_tile_list)
+[![Github](https://img.shields.io/badge/Demo-ExpansionTileList-red)](https://monohaus.github.io/expansion_tile_list_demo/)
+[![Test](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml/badge.svg)](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue)](LICENSE)
 
 ## Description
 
@@ -19,11 +22,12 @@ allows developers to create lists of expandable tiles with various customization
 control over the expansion state. The package supports features like global trailing widget, trailing animation, and
 different expansion modes to suit various use cases.
 
+Check out the [demo page](https://github.com/monohaus/expansion_tile_list_demo) to explore the latest features and experience the features firsthand!”
 
-<img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list">
 
-<img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true"  alt="Basic Usage"  title="Basic Usage"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="300"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="300"/>
+<img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/expansion_tile_list.gif?raw=true" width="300" title="expansion_tile_list" alt="expansion_tile_list">
 
+<img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true"  alt="Basic Usage"  title="Basic Usage"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="300"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="300"/>
 ## Features
 
 ### `List Features`
@@ -80,7 +84,7 @@ import 'package:expansion_tile_list/expansion_tile_list.dart';
 
 ## Example
 
-Here's a simple example of how to use the `ExpansionTileList`:
+Here are some simple examples of how to use the `ExpansionTileList`: check out the [demo](https://github.com/monohaus/expansion_tile_list_demo)
 
 1. Basic usage: create a list of `ExpansionTile` widgets using the `ExpansionTileList` widget.
 
@@ -152,7 +156,7 @@ ExpansionTileList(
 );
 ```
 
-3. Using `separtorBuilder`: This property allows you to customize the appearance of the separators between the tiles in
+3. Using `separatorBuilder`: This property allows you to customize the appearance of the separators between the tiles in
    the list.
 
 ```dart
@@ -222,17 +226,17 @@ var expansionTileList = ExpansionTileList(
   ],
 );
 
+_(){
+  /// Expand the first tile
+  controller.expand(0);
 
-/// Expand the first tile
-controller.expand
-(0);
+  /// Collapse the first tilecontroller.collapse(0);
+  /// Toggle the first tilecontroller.toggle(0);
+  /// Expand all tilescontroller.expandAll();
 
-/// Collapse the first tilecontroller.collapse(0);
-/// Toggle the first tilecontroller.toggle(0);
-/// Expand all tilescontroller.expandAll();
-
-/// Collapse all tiles
-controller.collapseAll();
+  /// Collapse all tiles
+  controller.collapseAll();
+}
 ```
 
 6. Using `onExpansionChanged`: This property allows you to listen to the expansion changes of the tiles.
@@ -436,21 +440,21 @@ var expansionTileList = ExpansionTileList(
 ## How initialExpandedIndexes with ExpansionMode works
 
 - `ExpansionMode.atMostOne`
-    - consider `initialExpandedIndexes` first valid index.
-    - consider first `ExpansionTile` child widget with`initiallyExpanded` true.
-    - collapse all tiles.
+    - considers `initialExpandedIndexes` first valid index.
+    - considers first `ExpansionTile` child widget with`initiallyExpanded` true.
+    - collapses all tiles.
 - `ExpansionMode.exactlyOne`
-    - consider `initialExpandedIndexes` first valid index.
-    - consider first `ExpansionTile` child widget with`initiallyExpanded` true.
-    - consider first `ExpansionTile` child widget at index 0.
+    - considers `initialExpandedIndexes` first valid index.
+    - considers first `ExpansionTile` child widget with`initiallyExpanded` true.
+    - considers first `ExpansionTile` child widget at index `0`.
 - `ExpansionMode.atLeastOne`
-    - consider `initialExpandedIndexes` all indexes if not empty.
-    - consider all `ExpansionTile` children widget with`initiallyExpanded` true.
-    - consider first `ExpansionTile` child widget at index 0.
+    - considers `initialExpandedIndexes` all indexes if not empty.
+    - considers all `ExpansionTile` children widget with`initiallyExpanded` true.
+    - considers first `ExpansionTile` child widget at index `0`.
 - `ExpansionMode.any`
-    - consider `initialExpandedIndexes` all indexes if not empty.
-    - consider all `ExpansionTile` children widget with`initiallyExpanded` true.
-    - collapse all tiles.
+    - considers `initialExpandedIndexes` all indexes if not empty.
+    - considers all `ExpansionTile` children widget with`initiallyExpanded` true.
+    - collapses all tiles.
 
 ## How tileGapSize and separatorBuilder layout works
 
@@ -499,6 +503,25 @@ All testcase are available for the package.
 flutter test
 ```
 
+## Troubleshooting
+1. If you encounter any issues while using the package, please check the [GitHub issues](github.com/monohaus/expansion_tile_list/issues) page to see if the issue has already been reported.
+2. If you are unable to find a solution, please create a new issue with a detailed description of the problem, including the steps to reproduce it.
+3. If you have any questions or need help with the package, please feel free to reach out to the package maintainer.
+4. If you would like to contribute to the package, please refer to the [Contributing](#contributing) section for more information.
+5. If you have any feedback or suggestions for the package, please share them with the package maintainer.
+
+## Known Issues
+ - State Management issues with ExpansionTile children: Set [maintainState](https://api.flutter.dev/flutter/material/ExpansionTile/maintainState.html) to `true` for the `ExpansionTile` children to maintain the state of the children when the parent `ExpansionTileList` is rebuilt.
+ - Expansion state issues: The expansion state of the `ExpansionTile`  may not be maintained when the parent `ExpansionTileList` is rebuilt due to the change of the widget tree. To maintain the expansion state, use a GlobalKey.
+ - ExpansionTileList `tileBuilder` issues: The `tileBuilder` property may not work as expected when the `ExpansionTile` is rebuilt due changes in the widget tree at runtime. To resolve this use a GlobalKey on the ExpansionTileList.
+ - ExpansionTileController `controller` issues: The `controller` property may not work as expected when the `ExpansionTile` is rebuilt due. To resolve this use a GlobalKey or ExpansionTileItemController to ensure.
+```text
+  Failed assertion: line 607 pos 12: 'widget.controller?._state == null': is not true.
+ ```
+These issues are due to the Flutter framework limitations and not the package. We have ensured that the package works as expected with the Flutter framework and made sure to take a safe decision to mitigate this issues.
+This means no issues should be encountered when using the package as intended.
+
+
 ## Contributing
 
 Contributions are welcome! If you find a bug or want a feature, please fill an issue. If you want to contribute code,
@@ -519,5 +542,3 @@ We welcome contributions from everyone. Before you start:
 ## License
 
 This project is licensed under the BSD-style license. See the [LICENSE](LICENSE) file for details.
-
-[list_basic_usage]: https://user-images.githubusercontent.com/15138747/208438575-8a9acded-1188-494e-9b01-9ac061c6d911.gif

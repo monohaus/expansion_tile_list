@@ -225,22 +225,25 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
   late Animation<double> _trailingAnimation;
   late ExpansionTileController _controller;
   late bool _isEnabled;
+  late bool _isExpanded;
+  late Key? _key;
 
   @override
   void initState() {
     super.initState();
     _isEnabled = widget.enabled;
+    _isExpanded = widget.initiallyExpanded;
     _animationController = AnimationController(
         duration: widget.expansionAnimationStyle?.duration ?? Durations.short4,
         reverseDuration: widget.expansionAnimationStyle?.reverseDuration ??
             widget.expansionAnimationStyle?.duration ??
             Durations.short4,
-        //value: widget.initiallyExpanded ? _halfTween.end : _halfTween.begin,
+        value: widget.initiallyExpanded ? _halfTween.end : _halfTween.begin,
         vsync: this);
 
     _updateTrailingAnimation();
-    _updateExpansionChange(widget.initiallyExpanded);
-    _updateExpansionTileItemController();
+    _updateExpansionTileItemController(true);
+    _updateKey();
   }
 
   @override
@@ -250,26 +253,18 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
     if (widget.enabled != oldWidget.enabled) {
       _isEnabled = widget.enabled;
     }
-
+    if (oldWidget.expansionAnimationStyle != widget.expansionAnimationStyle) {
+      _updateAnimationStyle(ExpansionTileTheme.of(context));
+    }
     if (oldWidget.trailingAnimation != widget.trailingAnimation) {
       _updateTrailingAnimation();
     }
-
     if (widget.controller != oldWidget.controller) {
-      if (oldWidget.controller is ExpansionTileItemController) {
-        (oldWidget.controller as ExpansionTileItemController)._state = null;
-      }
       _updateExpansionTileItemController();
+      _updateKey();
+    } else if (widget.key != oldWidget.key) {
+      _updateKey();
     }
-
-    if (oldWidget.expansionAnimationStyle != widget.expansionAnimationStyle) {
-      final ExpansionTileThemeData expansionTileTheme =
-          ExpansionTileTheme.of(context);
-      _updateAnimationController(expansionTileTheme);
-    }
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateExpansionChange(_controller.isExpanded);
-    });*/
   }
 
   @override
@@ -279,7 +274,8 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
 
   @override
   void dispose() {
-    if (widget.controller is ExpansionTileItemController) {
+    if (widget.controller is ExpansionTileItemController &&
+        (widget.controller as ExpansionTileItemController)._state == this) {
       (widget.controller as ExpansionTileItemController)._state = null;
     }
     _animationController.dispose();
@@ -289,14 +285,15 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
   @override
   Widget build(BuildContext context) {
     return (widget as ExpansionTile).copyWith(
-      key:
-          widget.key != null ? PageStorageKey(widget.key ?? _controller) : null,
+      key: _key,
       enabled: _isEnabled,
       controller: _controller,
+      //initiallyExpanded: _isExpanded,
       trailing: widget.enableTrailingAnimation == true
           ? _buildTrailingAnimation(context)
           : widget.trailing,
       onExpansionChanged: (isExpanded) {
+        _isExpanded = isExpanded;
         _updateExpansionChange(isExpanded);
         if (widget.onExpansionChanged != null) {
           widget.onExpansionChanged!(isExpanded);
@@ -309,18 +306,38 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
     super.setState(fn ?? () {});
   }
 
-  void _updateTrailingAnimation() {
-    var curve = widget.trailingAnimation?.curve ?? Curves.easeIn;
-    _trailingAnimation = _animationController.drive(
-        (widget.trailingAnimation?.animate ?? _halfTween)
-            .chain(CurveTween(curve: curve)));
+  void _updateKey() {
+    _key = PageStorageKey(
+        widget.key != null ? [widget.key, _controller] : _controller);
   }
 
-  void _updateExpansionTileItemController() {
+  void _updateTrailingAnimation() {
+    var curve = widget.trailingAnimation?.curve ?? Curves.easeIn;
+    var animatable = (widget.trailingAnimation?.animate ?? _halfTween)
+        .chain(CurveTween(curve: curve));
+    var isTween = animatable is Tween<double>;
+    if (isTween) {
+      _animationController.value =
+          (_isExpanded ? animatable.end : animatable.begin) ??
+              _animationController.value;
+    }
+    _trailingAnimation = _animationController.drive(animatable);
+    if (!isTween) {
+      _updateExpansionChange(_isExpanded);
+    }
+  }
+
+  void _updateExpansionTileItemController([bool init = false]) {
     if (widget.controller is ExpansionTileItemController) {
-      var itemController = (widget.controller as ExpansionTileItemController)
-        .._state = this;
-      _controller = itemController.delegate ?? itemController;
+      if (init) {
+        if ((widget.controller as ExpansionTileItemController)._state != null) {
+          //("ExpansionTile controller already in use or this is an indicator that you should use a Global Key to manage widget state update rather than recreation");
+        }
+      }
+      _controller = (widget.controller as ExpansionTileItemController
+                .._state = this)
+              .delegate ??
+          ExpansionTileController();
     } else {
       _controller = widget.controller ?? ExpansionTileController();
     }
@@ -333,7 +350,7 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
   /// If the [ExpansionTileList] is set to single expansion mode, it collapses all other tiles.
   ///
   /// [isExpanded] is the new expansion state of the tile.
-  void _updateExpansionChange(bool isExpanded, { double? from }) {
+  void _updateExpansionChange(bool isExpanded, {double? from}) {
     if (widget.enableTrailingAnimation == true) {
       isExpanded
           ? _animationController.forward(from: from)
@@ -343,10 +360,10 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
 
   /// Updates the animation controller of the tile.
   /// This method updates the animation controller of the tile based on the theme.
-  void _updateAnimationController(ExpansionTileThemeData theme) {
-    /*if (widget.enableTrailingAnimation != true) {
+  void _updateAnimationStyle(ExpansionTileThemeData theme) {
+    if (widget.enableTrailingAnimation != true) {
       return;
-    }*/
+    }
     _animationController.duration = widget.expansionAnimationStyle?.duration ??
         theme.expansionAnimationStyle?.duration ??
         _animationController.duration ??
@@ -396,35 +413,31 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
 class ExpansionTileItemController extends ExpansionTileController {
   /// Creates an [ExpansionTileItemController] instance.
   /// Optionally, you can pass a parent [ExpansionTileController] to the constructor as a parent controller.
-  ExpansionTileItemController(
-      [this.delegate]); //assert(this.delegate._state == null);
+  ExpansionTileItemController([this.delegate]);
 
   /// The state of the [ExpansionTileItem] widget.
   _ExpansionTileItemState? _state;
 
   /// The delegate controller of the [ExpansionTileItemController].
-  ExpansionTileController? delegate;
+  final ExpansionTileController? delegate;
 
-  /// A boolean value that determines whether the [ExpansionTileItem] widget is mounted.
-  /// If the [mounted] property is true, the [ExpansionTileItem] widget is mounted.
-  /// If the [mounted] property is false, the [ExpansionTileItem] widget is not mounted.
-  /// The [mounted] property is useful when you want to check if the [ExpansionTileItem] widget is mounted before calling methods on the controller.
-  bool get mounted => _state?.mounted ?? false;
+  ExpansionTileController? get _this => delegate ?? _state!._controller;
 
   /// Expands the [ExpansionTileItem] widget.
   /// This method expands the [ExpansionTileItem] widget if it is not already expanded.
   @override
   bool get isExpanded {
     assert(_state != null);
-    return delegate?.isExpanded ?? super.isExpanded;
+    return _this?.isExpanded ?? super.isExpanded;
   }
 
   /// Collapses the [ExpansionTileItem] widget.
   /// This method collapses the [ExpansionTileItem] widget if it is not already collapsed.
   void toggle() {
     assert(_state != null);
-    if (delegate != null) {
-      delegate!.isExpanded ? delegate!.collapse() : delegate!.expand();
+    var controller = _this;
+    if (controller != null) {
+      controller.isExpanded ? controller.collapse() : controller.expand();
     } else {
       super.isExpanded ? super.collapse() : super.expand();
     }
@@ -435,7 +448,8 @@ class ExpansionTileItemController extends ExpansionTileController {
   @override
   void expand() {
     assert(_state != null);
-    delegate != null ? delegate!.expand() : super.expand();
+    var controller = _this;
+    controller != null ? controller.expand() : super.expand();
   }
 
   /// Collapses the [ExpansionTileItem] widget.
@@ -443,7 +457,8 @@ class ExpansionTileItemController extends ExpansionTileController {
   @override
   void collapse() {
     assert(_state != null);
-    delegate != null ? delegate!.collapse() : super.collapse();
+    var controller = _this;
+    controller != null ? controller.collapse() : super.collapse();
   }
 
   /// Refreshes the [ExpansionTileItem] widget.
@@ -483,4 +498,23 @@ class ExpansionTileItemController extends ExpansionTileController {
     assert(_state != null);
     return _state!._isEnabled;
   }
+
+  /// A boolean value that determines whether the [ExpansionTileItem] widget is active.
+/*bool isActive() {
+    try {
+      isExpanded;
+      return true;
+    } catch (e) {
+      print("isActive: $e");
+      return false;
+    }
+  }*/
+
+  /// A boolean value that determines whether the [ExpansionTileItemController] is equal to another object.
+/*bool equals(Object other) {
+    if (runtimeType != other.runtimeType) return false;
+    return other is ExpansionTileItemController &&
+        delegate == other.delegate &&
+        _state == other._state;
+  }*/
 }
