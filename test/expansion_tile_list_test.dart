@@ -116,7 +116,6 @@ void basicWidgetTests() {
   testWidgets(
       'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
       (WidgetTester tester) async {
-   var colors = [Colors.blue, Colors.green];
    var key1 =  GlobalKey();
    var key2 =  GlobalKey();
     await tester.pumpWidget(
