@@ -132,13 +132,13 @@ void basicWidgetTests() {
             children:  <ExpansionTile>[
               ExpansionTile(
                 key: key1,
-                title: Text('Tile 1'),
-                children: <Widget>[Text('Child 1')],
+                title: const Text('Tile 1'),
+                children: const <Widget>[Text('Child 1')],
               ),
               ExpansionTile(
                 key: key2,
-                title: Text('Tile 2'),
-                children: <Widget>[Text('Child 2')],
+                title: const Text('Tile 2'),
+                children: const <Widget>[Text('Child 2')],
               ),
             ],
           ),
