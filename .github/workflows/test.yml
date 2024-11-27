@@ -17,7 +17,7 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: stable
-          version: 1.17.0
+          version: 3.3.4
 
       - name: Upgrade Flutter
         run: flutter upgrade
