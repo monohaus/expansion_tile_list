@@ -116,13 +116,15 @@ void basicWidgetTests() {
   testWidgets(
       'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
       (WidgetTester tester) async {
+   var colors = [Colors.blue, Colors.green];
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: ExpansionTileList(
             tileBuilder: (context, index, child) {
               return Container(
-                color: index % 2 == 0 ? Colors.blue : Colors.green,
+                key: ValueKey(index),
+                color: colors[index % 2],
                 child: child,
               );
             },
@@ -146,13 +148,13 @@ void basicWidgetTests() {
 
     // Verify the first tile has a blue background.
     final firstTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 1'), matching: find.byType(Container).first),
+      find.ancestor(of: find.text('Tile 1'), matching: find.byKey(const ValueKey(0))),
     );
     expect(firstTileContainer.color, Colors.blue);
 
     // Verify the second tile has a green background.
     final secondTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 2'), matching: find.byType(Container).first),
+      find.ancestor(of: find.text('Tile 2'), matching: find.byKey(const ValueKey(1))),
     );
     expect(secondTileContainer.color, Colors.green);
   });
