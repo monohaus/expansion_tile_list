@@ -146,13 +146,13 @@ void basicWidgetTests() {
 
     // Verify the first tile has a blue background.
     final firstTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 1'), matching: find.byType(Container)),
+      find.ancestor(of: find.text('Tile 1'), matching: find.byType(Container).first),
     );
     expect(firstTileContainer.color, Colors.blue);
 
     // Verify the second tile has a green background.
     final secondTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 2'), matching: find.byType(Container)),
+      find.ancestor(of: find.text('Tile 2'), matching: find.byType(Container).first),
     );
     expect(secondTileContainer.color, Colors.green);
   });
