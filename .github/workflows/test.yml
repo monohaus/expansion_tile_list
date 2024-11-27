@@ -19,8 +19,6 @@ jobs:
           channel: stable
           version: 3.10.0
 
-
-
       - name: Install dependencies
         run: flutter pub get
 
