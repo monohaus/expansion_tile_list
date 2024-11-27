@@ -158,7 +158,7 @@ void basicWidgetTests() {
     expect(secondTileContainer.color, Colors.green);
   });
 
-  /*testWidgets(
+  testWidgets(
       'ExpansionTileList can be created and responds to tap events (onExpansionChanged is called)',
       (WidgetTester tester) async {
     int callbackCount = 0;
@@ -206,7 +206,7 @@ void basicWidgetTests() {
 
     // Verify the callback is called twice.
     expect(callbackCount, 2);
-  });*/
+  });
 
   testWidgets(
       'ExpansionTileListController can toggle, expand and collapse tiles',
