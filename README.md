@@ -72,7 +72,7 @@ a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/pa
 dependencies:
   flutter:
     sdk: flutter
-  expansion_tile_list: ^1.0.1
+  expansion_tile_list: ^1.0.2
 ```
 
 ## Usage
@@ -527,13 +527,13 @@ flutter test
 
 ## Known Issues
  - State Management issues with ExpansionTile children: Set [maintainState](https://api.flutter.dev/flutter/material/ExpansionTile/maintainState.html) to `true` for the `ExpansionTile` children to maintain the state of the children when the parent `ExpansionTileList` is rebuilt.
- - Expansion state issues: The expansion state of the `ExpansionTile`  may not be maintained when the parent of `ExpansionTileList` is rebuilds due to the change of the widget tree. To maintain the expansion state, use a GlobalKey.
+ - Expansion state issues: The expansion state of the `ExpansionTile`  may not be maintained when the parent of `ExpansionTileList` is rebuilt due to the change of the widget tree. To maintain the expansion state, use a GlobalKey.
  - ExpansionTileList `tileBuilder` issues: If the `tileBuilder` modifies the widget tree during a rebuild, it may disrupt the maintenance of the expansion state of the `ExpansionTile`. To address this, use a GlobalKey on the `ExpansionTile`.
  - ExpansionTileController `controller` issues:  The `controller` property may not function as expected when the `ExpansionTile` modifies the widget is modified tree during a rebuild. To resolve this, use a `GlobalKey` or delegate the management of the controller to `ExpansionTileList` using `ExpansionTileItemController`.
 ```text
   Failed assertion: line 607 pos 12: 'widget.controller?._state == null': is not true.
  ```
-These issues are due to the Flutter framework limitations and not the package. We have ensured that the package works as expected with the Flutter framework and made sure to take a safe decision to mitigate this issues.
+These issues are due to the `ExpansionTile` widget limitations and not the package. We have ensured that the package works as expected with the Flutter framework and made sure to take a safe decision to mitigate these issues.
 This means no issues should be encountered when using the package as intended.
 
 ## Contributing

@@ -27,3 +27,7 @@
 - Documentation update
 - Tested on minimum SDK version and updated the same in the pubspec.yaml
 - Renamed typedef `IndexedExpansionTileAnimation` to `IndexedValueExpansionTileAnimation`
+
+## 1.0.2
+- Documentation update
+- Fix dart format issues
