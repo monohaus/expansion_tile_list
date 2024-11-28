@@ -5,7 +5,7 @@ typedef ValueExpansionTileAnimation
     = ExpansionTileAnimation<double, ValueWidgetBuilder<double>>;
 
 /// This typedef represents a function that takes a [BuildContext], an index, a generic value of type [T], and an optional child widget.
-typedef IndexedExpansionTileAnimation
+typedef IndexedValueExpansionTileAnimation
     = ExpansionTileAnimation<double, IndexedValueWidgetBuilder<double>>;
 
 /// This typedef represents a function that takes a [BuildContext], an index, a generic value of type [T], and an optional child widget.
@@ -61,12 +61,12 @@ class ExpansionTileAnimation<T, BuilderFxn> {
   }
 
   /// Creates an [ExpansionTileAnimation] object with a generic value of type [double] for indexed range.
-  static IndexedExpansionTileAnimation indexed(
+  static IndexedValueExpansionTileAnimation indexed(
       {required Animatable<double> animate,
       Duration? duration,
       Curve? curve,
       required IndexedValueWidgetBuilder<double> builder}) {
-    return IndexedExpansionTileAnimation(
+    return IndexedValueExpansionTileAnimation(
       animate: animate,
       duration: duration,
       curve: curve,

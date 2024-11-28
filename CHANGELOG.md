@@ -22,3 +22,8 @@
 - Added `ExpansionMode.single` named constructor to expand only one tile at a time.
 - Added `ExpansionMode.multiple` named constructor to expand multiple tiles at a time.
 - Added a new Widget `ExpansionTileItem` to customize the tile appearance for better flexibility when compared to `ExpansionTile`
+
+## 1.0.1
+- Documentation update
+- Tested on minimum SDK version and updated the same in the pubspec.yaml
+- Renamed typedef `IndexedExpansionTileAnimation` to `IndexedValueExpansionTileAnimation`

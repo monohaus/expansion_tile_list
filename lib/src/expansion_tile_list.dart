@@ -11,8 +11,7 @@ import 'package:flutter/material.dart';
 typedef ExpansionTileCallback = void Function(int index, bool isExpanded);
 
 /// Signature for the listener callback that's called when an [ExpansionTileList] is
-typedef ExpansionTileListAnimation
-    = ExpansionTileAnimation<double, IndexedValueWidgetBuilder<double>>;
+typedef ExpansionTileListAnimation = IndexedValueExpansionTileAnimation;
 
 /// Enum representing the expansion behavior of the [ExpansionTileList].
 ///
@@ -62,21 +61,19 @@ abstract class _AssertMessage {
 /// The [initialExpandedIndexes] property can be used to specify the indexes of the tiles that are initially expanded.
 /// The [onExpansionChanged] callback is called whenever a tile is expanded or collapsed.
 /// The [tileGapSize] property can be used to set the size of the gap between the tiles in the list.
-/// The [builder] property can be used to customize the appearance of the tiles.
+/// The [tileBuilder] property can be used to customize the appearance of the tiles.
 /// The [controller] property can be used to programmatically control the expansion of the tiles.
 /// The [trailing] property can be used to set the widget that is displayed at the end of each tile header.
-/// The [trailingAnimation] property can be used to set the animation for the trailing widget of the tiles.
+/// The [trailingAnimation] property can be used to customize the animation for the trailing widget of the tiles.
 /// The [enableTrailingAnimation] property can be used to enable or disable the trailing animation.
-/// The [trailingAnimationBuilder] property can be used to customize the trailing animation of the tiles.
-/// If the [trailingAnimationBuilder] property is null, the default animation is used.
 /// The default animation rotates the trailing widget by 180 degrees and can be customized by providing a custom builder.
 /// The custom builder can be used to create more complex animations.
 class ExpansionTileList extends StatefulWidget {
   /// Creates a list of [ExpansionTile]s that can have any number of tiles to expand and collapse.
   /// The expansion behavior uses [expansionMode] property as [ExpansionMode.any] by default.
-  /// Multiple Expansion Mode: [ExpansionMode.any] , [ExpansionMode.atLeastOne] and will use the [initialExpandedIndexes] if it's not empty.
-  /// [ExpansionMode.atLeastOne] will default to the first expandable tile child index at zero if [initialExpandedIndexes] is empty.
-  /// Single Expansion Mode: [ExpansionMode.exactlyOne] , [ExpansionMode.atMostOne] will use the [initialExpandedIndexes] if it's not empty,
+  /// Multiple Expansion Modes i.e. [ExpansionMode.any] and [ExpansionMode.atLeastOne]  will use the [initialExpandedIndexes] if it's not empty.
+  /// [ExpansionMode.atLeastOne] will default to the first expandable tile child at index`0` if [initialExpandedIndexes] is empty.
+  /// Single Expansion Mode i.e. [ExpansionMode.exactlyOne] and [ExpansionMode.atMostOne] will use the [initialExpandedIndexes] if it's not empty,
   /// it requires only one index, it will use the first valid index if there are multiple indexes.
   /// [ExpansionMode.exactlyOne] will default to the first expandable tile child index at zero if [initialExpandedIndexes] is empty.
   const ExpansionTileList({

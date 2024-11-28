@@ -6,13 +6,11 @@ import 'package:flutter/material.dart';
 import 'expansion_tile_animation.dart';
 
 /// This typedef represents a function that takes a [BuildContext] and a generic value of type [T], and returns a [Widget].
-typedef ExpansionTileItemAnimation
-    = ExpansionTileAnimation<double, ValueWidgetBuilder<double>>;
+typedef ExpansionTileItemAnimation = ValueExpansionTileAnimation;
 
 /// [ExpansionTileItem] is a custom [ExpansionTile] widget that allows you to animate the trailing widget of the tile.
 /// The widget provides an [trailingAnimation] property that allows you to animate the trailing widget of the tile.
-/// The [trailingAnimation] property is an [Animatable] object that defines the animation for the trailing widget.
-/// The [trailingAnimationBuilder] property is a [ValueWidgetBuilder] function that builds the trailing widget based on the animation value.
+/// The [trailingAnimation] property is an [ExpansionTileAnimation] object that defines the animation behaviour and builder for the trailing widget.
 /// The [enableTrailingAnimation] property is a boolean value that determines whether the trailing widget should be animated.
 /// If [enableTrailingAnimation] is true, the trailing widget is animated using the [trailingAnimation] property.
 /// If [enableTrailingAnimation] is false, the trailing widget is not animated.
@@ -140,7 +138,6 @@ class ExpansionTileItem extends ExpansionTile {
   /// - [enabled] - A boolean value that determines whether the tile is enabled.
   /// - [expansionAnimationStyle] - The animation style of the tile.
   /// - [trailingAnimation] - The animation for the trailing widget of the tile.
-  /// - [trailingAnimationBuilder] - The builder function for the trailing widget animation.
   ExpansionTileItem copyWith({
     Key? key,
     Widget? title,
@@ -461,9 +458,9 @@ class ExpansionTileItemController extends ExpansionTileController {
     controller != null ? controller.collapse() : super.collapse();
   }
 
-  /// Refreshes the [ExpansionTileItem] widget.
-  /// This method refreshes the [ExpansionTileItem] widget by calling the [setState] method.
-  void refresh([VoidCallback? fn]) {
+  /// Rebuild the [ExpansionTileItem] widget.
+  /// This method rebuilds the [ExpansionTileItem] widget by calling the setState method.
+  void _refresh([VoidCallback? fn]) {
     assert(_state != null);
     _state?._setState(fn);
   }
@@ -473,7 +470,7 @@ class ExpansionTileItemController extends ExpansionTileController {
   void disable([VoidCallback? fn]) {
     assert(_state != null);
     if (isEnabled) {
-      refresh(() {
+      _refresh(() {
         _state?._isEnabled = false;
         fn?.call();
       });
@@ -485,7 +482,7 @@ class ExpansionTileItemController extends ExpansionTileController {
   void enable([VoidCallback? fn]) {
     assert(_state != null);
     if (!isEnabled) {
-      refresh(() {
+      _refresh(() {
         _state?._isEnabled = true;
         fn?.call();
       });
@@ -498,23 +495,4 @@ class ExpansionTileItemController extends ExpansionTileController {
     assert(_state != null);
     return _state!._isEnabled;
   }
-
-  /// A boolean value that determines whether the [ExpansionTileItem] widget is active.
-/*bool isActive() {
-    try {
-      isExpanded;
-      return true;
-    } catch (e) {
-      print("isActive: $e");
-      return false;
-    }
-  }*/
-
-  /// A boolean value that determines whether the [ExpansionTileItemController] is equal to another object.
-/*bool equals(Object other) {
-    if (runtimeType != other.runtimeType) return false;
-    return other is ExpansionTileItemController &&
-        delegate == other.delegate &&
-        _state == other._state;
-  }*/
 }

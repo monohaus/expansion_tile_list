@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Flutter SDK
         uses: flutter-actions/setup-flutter@v3
@@ -22,17 +23,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Analyze project source
+        run: dart analyze
+
       - name: Run tests
         run: flutter test
 
       - name: Upgrade Flutter
         run: flutter upgrade
 
-      - name: Install dependencies after upgrade
+      - name: After Upgrade - Install dependencies
         run: flutter pub upgrade --major-versions
 
-      - name: Analyze project source
+      - name: After Upgrade - Analyze project source
         run: dart analyze
 
-      - name: Run tests after upgrade
+      - name: After Upgrade - Run tests
         run: flutter test
