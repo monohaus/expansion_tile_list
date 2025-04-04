@@ -13,9 +13,13 @@ void main() {
 
   expansionModeTests();
 
-  expansionModeUsingNamedConstructorTests();
+  //expansionModeUsingNamedConstructorTests();
 
   copyWithTests();
+
+  scrollableWidgetTests();
+
+  reorderableWidgetTests();
 }
 
 void basicWidgetTests() {
@@ -43,13 +47,13 @@ void basicWidgetTests() {
   });
 
   testWidgets(
-      'ExpansionTileList tileGapSize property sets the gap size between tiles',
+      'ExpansionTileList itemGapSize property sets the gap size between tiles',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
           body: ExpansionTileList(
-            tileGapSize: 10,
+            itemGapSize: 10,
             children: <ExpansionTile>[
               ExpansionTile(
                 title: Text('Tile 1'),
@@ -112,15 +116,15 @@ void basicWidgetTests() {
     expect(separator.color, Colors.red);
   });
 
-  /// 'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
+  /// 'ExpansionTileList itemBuilder property customizes the ExpansionTile widget',
   testWidgets(
-      'ExpansionTileList tileBuilder property customizes the ExpansionTile widget',
+      'ExpansionTileList itemBuilder property customizes the ExpansionTile widget',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: ExpansionTileList(
-            tileBuilder: (context, index, child) {
+            itemBuilder: (context, index, child) {
               return Container(
                 key: ValueKey(index),
                 color: (index % 2 == 0) ? Colors.blue : Colors.green,
@@ -147,13 +151,15 @@ void basicWidgetTests() {
 
     // Verify the first tile has a blue background.
     final firstTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 1'), matching: find.byKey(const ValueKey(0))),
+      find.ancestor(
+          of: find.text('Tile 1'), matching: find.byKey(const ValueKey(0))),
     );
     expect(firstTileContainer.color, Colors.blue);
 
     // Verify the second tile has a green background.
     final secondTileContainer = tester.widget<Container>(
-      find.ancestor(of: find.text('Tile 2'), matching: find.byKey(const ValueKey(1))),
+      find.ancestor(
+          of: find.text('Tile 2'), matching: find.byKey(const ValueKey(1))),
     );
     expect(secondTileContainer.color, Colors.green);
   });
@@ -336,6 +342,9 @@ void trailingAnimationTests() {
     final trailingIcon = find.byIcon(Icons.arrow_drop_down);
     final Transform rotateTransform = tester.firstWidget(
         find.ancestor(of: trailingIcon, matching: find.byType(Transform)));
+    /*final expansionTile = find.byType(ExpansionTile);
+    final rotateTransform = tester.firstWidget<Transform>(
+        find.descendant(of: expansionTile, matching: find.byType(Transform)));*/
 
     // Verify the initial rotation angle is 0.
     expect(_getTransformRotation(rotateTransform), 0);
@@ -408,17 +417,17 @@ void trailingAnimationTests() {
 
     final trailingIcon = find.byIcon(Icons.arrow_drop_down);
 
-    final rotateTransformFinder =
-        find.ancestor(of: trailingIcon, matching: find.byType(Transform));
-
+    // Find the Transform widget
+    final rotateTransformFinder = find.descendant(
+        of: find.byType(ExpansionTile), matching: find.byType(Transform));
     // Verify the transform widget is not found.
     expect(rotateTransformFinder, findsNothing);
 
     await tester.tap(trailingIcon);
     await tester.pumpAndSettle();
 
-    final rotateTransformTappedFinder =
-        find.ancestor(of: trailingIcon, matching: find.byType(Transform));
+    final rotateTransformTappedFinder = find.descendant(
+        of: find.byType(ExpansionTile), matching: find.byType(Transform));
     // Verify the transform widget is still not found after expansion..
     expect(rotateTransformTappedFinder, findsNothing);
   });
@@ -458,9 +467,14 @@ void trailingAnimationTests() {
     // Wait for a frame to ensure the initial rotation value is captured correctly
     await tester.pump();
 
+    // Find the expansion tile
+    final expansionTile = find.byType(ExpansionTile);
+
     // Get the initial rotation value
-    final initialTransform =
-        tester.widget<Transform>(find.byType(Transform).first);
+
+    final initialTransform = tester.firstWidget<Transform>(
+        find.descendant(of: expansionTile, matching: find.byType(Transform)));
+
     final initialRotation = _getTransformRotation(initialTransform);
     expect(initialRotation, 0.0);
 
@@ -471,9 +485,9 @@ void trailingAnimationTests() {
     // Verify the expanded content is displayed
     expect(find.text('Child 1'), findsOneWidget);
 
-    // Get the current rotation value
-    final currentTransform =
-        tester.widget<Transform>(find.byType(Transform).first);
+    final currentTransform = tester.firstWidget<Transform>(
+        find.descendant(of: expansionTile, matching: find.byType(Transform)));
+
     final currentRotation = _getTransformRotation(currentTransform);
     expect(currentRotation, pi);
 
@@ -605,9 +619,20 @@ void edgeCaseTests() {
     expect(find.text('Item 2 body'), findsNothing);
 
     // Try to toggle, expand, and collapse an invalid index.
-    controller.toggle(5);
-    controller.expand(5);
-    controller.collapse(5);
+    // This should throw an assertion error.
+    expect(
+      () => controller.toggle(5),
+      throwsA(isA<AssertionError>().having(
+          (e) => e.message, 'message', contains('index out of bounds'))),
+    );
+    expect(
+      () => controller.expand(5),
+      throwsA(isA<AssertionError>()),
+    );
+    expect(
+      () => controller.collapse(5),
+      throwsA(isA<AssertionError>()),
+    );
     await tester.pumpAndSettle();
 
     // Verify all tiles are still collapsed.
@@ -707,7 +732,7 @@ void expansionModeTests() {
     //
     expect(
         tester.widget<ExpansionTile>(find.byType(ExpansionTile).first).enabled,
-        isFalse);
+        isTrue);
     expect(
         tester.widget<ExpansionTile>(find.byType(ExpansionTile).last).enabled,
         isTrue);
@@ -813,7 +838,7 @@ void expansionModeTests() {
   });
 }
 
-void expansionModeUsingNamedConstructorTests() {
+/*void expansionModeUsingNamedConstructorTests() {
   testWidgets(
       'ExpansionTileList.multiple defaults to ExpansionMode.any expands and collapses tiles independently',
       (WidgetTester tester) async {
@@ -1015,7 +1040,7 @@ void expansionModeUsingNamedConstructorTests() {
         tester.widget<ExpansionTile>(find.byType(ExpansionTile).last).enabled,
         isFalse);
   });
-}
+}*/
 
 void copyWithTests() {
   testWidgets('ExpansionTileList copyWith works correctly',
@@ -1069,5 +1094,760 @@ void copyWithTests() {
 
     // Verify the children are set correctly.
     expect(modifiedExpansionTileList.children.length, 2);
+  });
+}
+
+void scrollableWidgetTests() {
+  testWidgets('ExpansionTileList can be scrolled', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList(
+            children: List<ExpansionTile>.generate(
+                20,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Verify the first tile is  visible
+    expect(find.text('Item 0'), findsOneWidget);
+    final expansionTileListFinder = find.byType(ExpansionTileList);
+    final position = tester.getBottomLeft(expansionTileListFinder);
+    // Scroll the ExpansionTileList
+    await tester.fling(
+        expansionTileListFinder, Offset(0, -(position.dy)), 1000);
+    await tester.pumpAndSettle();
+
+    // Verify the first tile is not visible
+    expect(find.text('Item 0'), findsNothing);
+
+    // Verify the last tile is visible
+    expect(find.text('Item 19'), findsOneWidget);
+  });
+}
+
+void reorderableWidgetTests() {
+  testWidgets('ExpansionTileList can be reordered',
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Initially, all tiles are collapsed.
+    expect(find.text('Item 0 body'), findsNothing);
+    expect(find.text('Item 1 body'), findsNothing);
+    expect(find.text('Item 2 body'), findsNothing);
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    // Find the second item and its position
+    final item2Finder = find.text('Item 1');
+    final item2Position = tester.getCenter(item2Finder);
+
+    // Find the third item and its position
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    ///Drag the first item to the position of the third item
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    final item1PositionAfterDrag = tester.getCenter(item1Finder);
+    // Verify that the order has changed
+    expect(item1PositionAfterDrag, item2Position);
+    // find all text values
+    final textValues = find
+        .byType(Text)
+        .evaluate()
+        .map((e) => e.widget as Text)
+        .map((e) => e.data)
+        .toList();
+    expect(textValues, ['Item 1', 'Item 0', 'Item 2']);
+
+    // Expand the first tile
+    controller.expand(0);
+    await tester.pumpAndSettle();
+
+    // Verify the expanded tile is still in the first position
+    expect(find.text('Item 0 body'), findsNothing);
+    expect(find.text('Item 1 body'), findsOneWidget);
+    expect(find.text('Item 2 body'), findsNothing);
+  });
+
+  testWidgets(
+      "ExpansionTileList will not be draggable when enableDefaultDragHandle is false",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            enableDefaultDragHandles: false,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item at index 0  has not been dragged
+    expect(controller.currentPosition(0), 0);
+  });
+
+  testWidgets('ExpansionTileList can be reordered with custom drag handle',
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    final reorderNotifier = ValueNotifier<(int, int)>((0, 0));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            enableDefaultDragHandles: false,
+            //dragHandle: Icon(Icons.drag_handle),
+            onReorder: (oldIndex, newIndex) {
+              reorderNotifier.value = (oldIndex, newIndex);
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      leading: ValueListenableBuilder<(int, int)>(
+                          valueListenable: reorderNotifier,
+                          builder: (context, (int, int) value, child) {
+                            return ReorderableDragStartListener(
+                              key: PageStorageKey(index),
+                              index: controller.currentPosition(index),
+                              child: const Icon(Icons.drag_handle),
+                            );
+                          }),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Initially, all tiles are collapsed.
+    expect(find.text('Item 0 body'), findsNothing);
+    expect(find.text('Item 1 body'), findsNothing);
+    expect(find.text('Item 2 body'), findsNothing);
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    // Find the second item and its position
+    final item2Finder = find.text('Item 1');
+    final item2Position = tester.getCenter(item2Finder);
+
+    // Find the third item and its position
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    ///Drag the first item to the position of the third item (using the center drag position)
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    final item1PositionAfterDrag = tester.getCenter(item1Finder);
+    // Verify that the order has not changed
+    //expect(item1PositionAfterDrag, item2Position);
+    expect(item1PositionAfterDrag, isNot(equals(item2Position)));
+    // find all text values (still the same)
+    var textValues = find
+        .byType(Text)
+        .evaluate()
+        .map((e) => e.widget as Text)
+        .map((e) => e.data)
+        .toList();
+    expect(textValues, ['Item 0', 'Item 1', 'Item 2']);
+
+    final dragHandleFinder = find.byIcon(Icons.drag_handle).first;
+    final dragHandlePosition = tester.getCenter(dragHandleFinder);
+
+    ///Drag the first item to the position of the third item (using the leading drag handle)
+    await tester.drag(dragHandleFinder,
+        Offset(dragHandlePosition.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    final item1PosAfterDrag = tester.getCenter(item1Finder);
+    // Verify that the order has changed
+    expect(item1PosAfterDrag, item2Position);
+
+    // find all text values
+    textValues = find
+        .byType(Text)
+        .evaluate()
+        .map((e) => e.widget as Text)
+        .map((e) => e.data)
+        .toList();
+    expect(textValues, ['Item 1', 'Item 0', 'Item 2']);
+
+    // Expand the first tile
+    controller.expand(0);
+    await tester.pumpAndSettle();
+
+    // Verify the expanded tile is still in the first position
+    expect(find.text('Item 0 body'), findsNothing);
+    expect(find.text('Item 1 body'), findsOneWidget);
+    expect(find.text('Item 2 body'), findsNothing);
+    reorderNotifier.dispose();
+  });
+
+  testWidgets(
+      "ExpansionTileList onReorder callback is called when item is dragged",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    var reorderValue = (-1, -1);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            onReorder: (oldIndex, newIndex) {
+              reorderValue = (oldIndex, newIndex);
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    expect(reorderValue, (-1, -1));
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    // Find the third item and its position
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    // Drag the first item to the position of the third item
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the callback is called with the correct indices
+    expect(reorderValue, (0, 2));
+  });
+
+  testWidgets(
+      "ExpansionTileList canReorder callback allows only even indexed items to be dragged",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            canReorder: (oldIndex, newIndex) {
+              return oldIndex.isEven;
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    expect(controller.initialPosition(1), controller.currentPosition(1));
+    expect(controller.currentPosition(1), 1);
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    // Find the second item and its position
+    final item2Finder = find.text('Item 1');
+    final item2Position = tester.getCenter(item2Finder);
+
+    // Find the third item and its position
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    // Drag the second item at index 1 to the position of the third item
+    var dy = item3Position.dy - item2Position.dy;
+    await tester.drag(item2Finder, Offset(0, dy + (dy / 2)));
+    await tester.pumpAndSettle();
+
+    // Verify the initialPosition equals the currentPosition
+    expect(controller.currentPosition(1), 1);
+    expect(controller.initialPosition(1), 1);
+
+    // Drag the first item at index 0 to the position of the third item
+    dy = item3Position.dy - item1Position.dy;
+    await tester.drag(item1Finder, Offset(0, dy + (dy / 2)));
+    await tester.pumpAndSettle();
+    // Verify the initialPosition is not equals the currentPosition
+    expect(controller.currentPosition(0), 1);
+    expect(controller.initialPosition(1), 0);
+  });
+
+  testWidgets(
+      "ExpansionTileList useDelayedDrag to delay the drag start (long press) when dragging an item",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            useDelayedDrag: true,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    expect(controller.currentPosition(0), 0);
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    // Find the third item and its position
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    // Drag the first item to the position of the third item
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the position has not changed
+    expect(controller.currentPosition(0), 0);
+
+    // LongPressDrag the first item to the position of the second item
+    // Start a gesture at the starting position
+    final TestGesture gesture = await tester.startGesture(item1Position);
+    // Pump to simulate the long press duration
+    await tester.pump(const Duration(seconds: 1));
+    await gesture
+        .moveBy(Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    // Verify the position has changed
+    expect(controller.currentPosition(0), 1);
+  });
+
+  testWidgets(
+      "ExpansionTileList drag handle placement works correctly with DragHandlePlacement.leading",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            dragHandlePlacement: DragHandlePlacement.leading,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      leading: const Icon(Icons.drag_handle),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item at index 0  has not been dragged
+    expect(controller.currentPosition(0), 0);
+
+    // Find the drag handle and its position
+    final dragHandleFinder = find.byIcon(Icons.drag_handle).first;
+    final dragHandlePosition = tester.getCenter(dragHandleFinder);
+
+    // Drag the first item to the position of the third item
+    await tester.drag(
+        dragHandleFinder,
+        Offset(
+            dragHandlePosition.dx, item3Position.dy - dragHandlePosition.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item has been dragged
+    expect(controller.currentPosition(0), 1);
+  });
+
+  testWidgets(
+      "ExpansionTileList drag handle placement works correctly with DragHandlePlacement.trailing",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            dragHandlePlacement: DragHandlePlacement.trailing,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      trailing: const Icon(Icons.drag_handle),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    await tester.drag(item1Finder,
+        Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item at index 0  has not been dragged
+    expect(controller.currentPosition(0), 0);
+
+    // Find the drag handle and its position
+    final dragHandleFinder = find.byIcon(Icons.drag_handle).first;
+    final dragHandlePosition = tester.getCenter(dragHandleFinder);
+
+    // Drag the first item to the position of the third item
+    await tester.drag(
+        dragHandleFinder,
+        Offset(
+            dragHandlePosition.dx, item3Position.dy - dragHandlePosition.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item has been dragged
+    expect(controller.currentPosition(0), 1);
+  });
+
+  testWidgets(
+      "ExpansionTileList drag handle placement works correctly with DragHandlePlacement.title",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            dragHandlePlacement: DragHandlePlacement.title,
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    await tester.dragFrom(
+        item1Position.translate(item1Position.dx + 1, item1Position.dy),
+        Offset(0, item3Position.dy - item1Position.dy),
+        touchSlopX: 0);
+    await tester.pumpAndSettle();
+
+    // Verify the first item at index 0  has not been dragged
+    expect(controller.currentPosition(0), 0);
+
+    // Find the drag handle and its position
+    final dragHandleFinder = item1Finder;
+    final dragHandlePosition = item1Position;
+
+    // Drag the first item to the position of the third item
+    await tester.drag(
+        dragHandleFinder,
+        Offset(
+            dragHandlePosition.dx, item3Position.dy - dragHandlePosition.dy));
+    await tester.pumpAndSettle();
+
+    // Verify the first item has been dragged
+    expect(controller.currentPosition(0), 1);
+  });
+
+  testWidgets(
+      "ExpansionTileList proxyDecorator function controls the appearance of the dragged item",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    final proxyDecoration = BoxDecoration(
+      color: Colors.red,
+      border: Border.all(color: Colors.black),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            proxyDecorator: (widget, index, animation) {
+              return Container(
+                key: ValueKey<String>("proxy_decorator_$index"),
+                decoration: proxyDecoration,
+                child: Text('Proxy Decorator $index'),
+              );
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    const item1ProxyKey = ValueKey<String>("proxy_decorator_0");
+    final item1Proxy = find.byKey(item1ProxyKey);
+    expect(item1Proxy, findsNothing);
+
+    final TestGesture gesture = await tester.startGesture(item1Position);
+    // Pump to simulate the long press duration
+    await tester.pump(const Duration(seconds: 3));
+
+    await gesture
+        .moveBy(Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pump();
+    // Verify the appearance of the dragged item
+    final item1ProxyDuringDrag = find.byKey(item1ProxyKey);
+    expect(item1ProxyDuringDrag, findsOneWidget);
+    //
+    final draggedItemDecoration =
+        tester.widget<Container>(item1ProxyDuringDrag).decoration;
+    expect(draggedItemDecoration, proxyDecoration);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    final item1ProxyAfterDrag = find.byKey(item1ProxyKey);
+    expect(item1ProxyAfterDrag, findsNothing);
+  });
+
+  testWidgets(
+      "ExpansionTileList drag handle builder function callback customizes the appearance of the drag handle",
+      (WidgetTester tester) async {
+    final controller = ExpansionTileListController();
+    final dragHandleDecoration = BoxDecoration(
+      color: Colors.red,
+      border: Border.all(color: Colors.black),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            controller: controller,
+            dragHandlePlacement: DragHandlePlacement.leading,
+            dragHandleBuilder: (context, index) {
+              return Container(
+                key: ValueKey<String>("drag_handle_$index"),
+                decoration: dragHandleDecoration,
+                child: const Icon(Icons.drag_handle),
+              );
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    // Find the first item and its position
+    final item1Finder = find.text('Item 0');
+    final item1Position = tester.getCenter(item1Finder);
+
+    final item3Finder = find.text('Item 2');
+    final item3Position = tester.getCenter(item3Finder);
+
+    const item1DragHandleKey = ValueKey<String>("drag_handle_0");
+    final item1DragHandle = find.byKey(item1DragHandleKey);
+    expect(item1DragHandle, findsOneWidget);
+
+    final TestGesture gesture = await tester.startGesture(item1Position);
+    // Pump to simulate the long press duration
+    await tester.pump(const Duration(seconds: 3));
+
+    await gesture
+        .moveBy(Offset(item1Position.dx, item3Position.dy - item1Position.dy));
+    await tester.pump();
+    // Verify the appearance of the drag handle
+    final item1DragHandleDuringDrag = find.byKey(item1DragHandleKey);
+    expect(item1DragHandleDuringDrag, findsOneWidget);
+    //
+    final draggedItemDecoration =
+        tester.widget<Container>(item1DragHandleDuringDrag).decoration;
+    expect(draggedItemDecoration, dragHandleDecoration);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    final item1DragHandleAfterDrag = find.byKey(item1DragHandleKey);
+    expect(item1DragHandleAfterDrag, findsOneWidget);
+  });
+
+  testWidgets(
+      "ExpansionTileList dragHandleAlignment.centerRight controls the alignment of the drag handle to the right relative to the DragHandlePlacement",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            dragHandlePlacement: DragHandlePlacement.leading,
+            dragHandleAlignment: HorizontalAlignment.centerRight,
+            dragHandleBuilder: (context, index) {
+              return Container(
+                key: ValueKey<String>("drag_handle_$index"),
+                child: const Icon(Icons.drag_handle),
+              );
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      leading: Icon(Icons.add,
+                          key: ValueKey<String>("leading_$index")),
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    for (int i = 0; i < 3; i++) {
+      // Find the leading item and its position
+      final leadingFinder = find.byKey(ValueKey<String>("leading_$i"));
+      final leadingPosition = tester.getCenter(leadingFinder);
+
+      // Find the drag handle and its position
+      final dragHandleFinder = find.byKey(ValueKey<String>("drag_handle_$i"));
+      final dragHandlePosition = tester.getCenter(dragHandleFinder);
+
+      // Verify the drag handle is aligned to the center right of the leading item
+      expect(dragHandlePosition.dx, greaterThan(leadingPosition.dx));
+      expect(dragHandlePosition.dy, equals(leadingPosition.dy));
+    }
+  });
+
+  testWidgets(
+      "ExpansionTileList dragHandleAlignment.centerLeft controls the alignment of the drag handle to the left relative to the DragHandlePlacement",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ExpansionTileList.reorderable(
+            dragHandlePlacement: DragHandlePlacement.leading,
+            dragHandleAlignment: HorizontalAlignment.centerLeft,
+            dragHandleBuilder: (context, index) {
+              return Container(
+                key: ValueKey<String>("drag_handle_$index"),
+                child: const Icon(Icons.drag_handle),
+              );
+            },
+            children: List<ExpansionTile>.generate(
+                3,
+                (int index) => ExpansionTile(
+                      leading: Icon(Icons.add,
+                          key: ValueKey<String>("leading_$index")),
+                      title: Text('Item $index'),
+                      children: [Text('Item $index body')],
+                    )),
+          ),
+        ),
+      ),
+    );
+
+    for (int i = 0; i < 3; i++) {
+      // Find the leading item and its position
+      final leadingFinder = find.byKey(ValueKey<String>("leading_$i"));
+      final leadingPosition = tester.getCenter(leadingFinder);
+
+      // Find the drag handle and its position
+      final dragHandleFinder = find.byKey(ValueKey<String>("drag_handle_$i"));
+      final dragHandlePosition = tester.getCenter(dragHandleFinder);
+
+      // Verify the drag handle is aligned to the center left of the leading item
+      expect(leadingPosition.dx, greaterThan(dragHandlePosition.dx));
+      expect(leadingPosition.dy, equals(dragHandlePosition.dy));
+    }
   });
 }

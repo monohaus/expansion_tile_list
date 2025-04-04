@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:expansion_tile_list/src/expansion_tile_extension.dart';
@@ -43,12 +44,13 @@ class ExpansionTileItem extends ExpansionTile {
     super.controller,
     super.dense,
     super.visualDensity,
+    super.minTileHeight,
     super.enableFeedback,
     super.enabled,
     super.expansionAnimationStyle,
     //
     this.trailingAnimation,
-    this.enableTrailingAnimation,
+    this.enableTrailingAnimation = true,
   });
 
   /// Creates an [ExpansionTileItem] from an [ExpansionTile] widget.
@@ -57,41 +59,85 @@ class ExpansionTileItem extends ExpansionTile {
   /// The [ExpansionTileItem.from] constructor is useful when you want to convert an existing [ExpansionTile] widget to an [ExpansionTileItem] widget.
   ExpansionTileItem.from(
     ExpansionTile expansionTile, {
+    Key? key,
+    Widget? title,
+    Widget? subtitle,
+    List<Widget>? children,
+    Widget? leading,
+    Widget? trailing,
+    bool? initiallyExpanded,
+    ValueChanged<bool>? onExpansionChanged,
+    Color? backgroundColor,
+    Color? collapsedBackgroundColor,
+    Color? textColor,
+    Color? collapsedTextColor,
+    Color? iconColor,
+    Color? collapsedIconColor,
+    EdgeInsetsGeometry? tilePadding,
+    EdgeInsetsGeometry? childrenPadding,
+    CrossAxisAlignment? expandedCrossAxisAlignment,
+    Alignment? expandedAlignment,
+    bool? maintainState,
+    ShapeBorder? shape,
+    ShapeBorder? collapsedShape,
+    Clip? clipBehavior,
+    ListTileControlAffinity? controlAffinity,
+    ExpansionTileController? controller,
+    bool? dense,
+    VisualDensity? visualDensity,
+    double? minTileHeight,
+    bool? enableFeedback,
+    bool? enabled,
+    AnimationStyle? expansionAnimationStyle,
     ExpansionTileItemAnimation? trailingAnimation,
     bool? enableTrailingAnimation,
   }) : this(
-          key: expansionTile.key,
-          leading: expansionTile.leading,
-          title: expansionTile.title,
-          subtitle: expansionTile.subtitle,
-          onExpansionChanged: expansionTile.onExpansionChanged,
-          trailing: expansionTile.trailing,
-          initiallyExpanded: expansionTile.initiallyExpanded,
-          maintainState: expansionTile.maintainState,
-          tilePadding: expansionTile.tilePadding,
-          expandedAlignment: expansionTile.expandedAlignment,
-          expandedCrossAxisAlignment: expansionTile.expandedCrossAxisAlignment,
-          childrenPadding: expansionTile.childrenPadding,
-          backgroundColor: expansionTile.backgroundColor,
-          collapsedBackgroundColor: expansionTile.collapsedBackgroundColor,
-          textColor: expansionTile.textColor,
-          collapsedTextColor: expansionTile.collapsedTextColor,
-          iconColor: expansionTile.iconColor,
-          collapsedIconColor: expansionTile.collapsedIconColor,
-          shape: expansionTile.shape,
-          collapsedShape: expansionTile.collapsedShape,
-          clipBehavior: expansionTile.clipBehavior,
-          controlAffinity: expansionTile.controlAffinity,
-          controller: expansionTile.controller,
-          dense: expansionTile.dense,
-          visualDensity: expansionTile.visualDensity,
-          enableFeedback: expansionTile.enableFeedback,
-          enabled: expansionTile.enabled,
-          expansionAnimationStyle: expansionTile.expansionAnimationStyle,
-          children: expansionTile.children,
-          //
-          trailingAnimation: trailingAnimation,
-          enableTrailingAnimation: enableTrailingAnimation,
+          key: key ?? expansionTile.key,
+          title: title ?? expansionTile.title,
+          subtitle: subtitle ?? expansionTile.subtitle,
+          leading: leading ?? expansionTile.leading,
+          trailing: trailing ?? expansionTile.trailing,
+          initiallyExpanded:
+              initiallyExpanded ?? expansionTile.initiallyExpanded,
+          onExpansionChanged:
+              onExpansionChanged ?? expansionTile.onExpansionChanged,
+          backgroundColor: backgroundColor ?? expansionTile.backgroundColor,
+          collapsedBackgroundColor: collapsedBackgroundColor ??
+              expansionTile.collapsedBackgroundColor,
+          textColor: textColor ?? expansionTile.textColor,
+          collapsedTextColor:
+              collapsedTextColor ?? expansionTile.collapsedTextColor,
+          iconColor: iconColor ?? expansionTile.iconColor,
+          collapsedIconColor:
+              collapsedIconColor ?? expansionTile.collapsedIconColor,
+          tilePadding: tilePadding ?? expansionTile.tilePadding,
+          childrenPadding: childrenPadding ?? expansionTile.childrenPadding,
+          expandedCrossAxisAlignment: expandedCrossAxisAlignment ??
+              expansionTile.expandedCrossAxisAlignment,
+          expandedAlignment:
+              expandedAlignment ?? expansionTile.expandedAlignment,
+          maintainState: maintainState ?? expansionTile.maintainState,
+          shape: shape ?? expansionTile.shape,
+          collapsedShape: collapsedShape ?? expansionTile.collapsedShape,
+          clipBehavior: clipBehavior ?? expansionTile.clipBehavior,
+          controlAffinity: controlAffinity ?? expansionTile.controlAffinity,
+          controller: controller ?? expansionTile.controller,
+          dense: dense ?? expansionTile.dense,
+          visualDensity: visualDensity ?? expansionTile.visualDensity,
+          minTileHeight: minTileHeight ?? expansionTile.minTileHeight,
+          enableFeedback: enableFeedback ?? expansionTile.enableFeedback,
+          enabled: enabled ?? expansionTile.enabled,
+          expansionAnimationStyle:
+              expansionAnimationStyle ?? expansionTile.expansionAnimationStyle,
+          trailingAnimation: trailingAnimation ??
+              (expansionTile is ExpansionTileItem
+                  ? expansionTile.trailingAnimation
+                  : null),
+          enableTrailingAnimation: enableTrailingAnimation ??
+              (expansionTile is ExpansionTileItem
+                  ? expansionTile.enableTrailingAnimation
+                  : null),
+          children: children ?? expansionTile.children,
         );
 
   /// The animation for the trailing widget of the tile.
@@ -409,29 +455,33 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
 /// The [ExpansionTileItemController] class provides methods to expand, collapse, toggle, refresh, disable, and enable the expansion state of an [ExpansionTileItem] widget.
 class ExpansionTileItemController extends ExpansionTileController {
   /// Creates an [ExpansionTileItemController] instance.
-  /// Optionally, you can pass a parent [ExpansionTileController] to the constructor as a parent controller.
   ExpansionTileItemController([this.delegate]);
 
-  /// The state of the [ExpansionTileItem] widget.
   _ExpansionTileItemState? _state;
 
   /// The delegate controller of the [ExpansionTileItemController].
   final ExpansionTileController? delegate;
 
-  ExpansionTileController? get _this => delegate ?? _state!._controller;
+  ExpansionTileController? get _this => delegate ?? _state?._controller;
+
+  /// A boolean value that determines whether the [ExpansionTileItem] widget is mounted.
+  bool get mounted => _state != null && _state!.mounted;
 
   /// Expands the [ExpansionTileItem] widget.
   /// This method expands the [ExpansionTileItem] widget if it is not already expanded.
+  /// @return true if the widget is expanded, false otherwise.
+  /// @see [safeDebugMode] to suppress assertions when in [kDebugMode].
   @override
   bool get isExpanded {
-    assert(_state != null);
-    return _this?.isExpanded ?? super.isExpanded;
+    return _validate() && (_this?.isExpanded ?? super.isExpanded);
   }
 
   /// Collapses the [ExpansionTileItem] widget.
   /// This method collapses the [ExpansionTileItem] widget if it is not already collapsed.
   void toggle() {
-    assert(_state != null);
+    if (!_validate()) {
+      return;
+    }
     var controller = _this;
     if (controller != null) {
       controller.isExpanded ? controller.collapse() : controller.expand();
@@ -444,32 +494,40 @@ class ExpansionTileItemController extends ExpansionTileController {
   /// This method expands the [ExpansionTileItem] widget if it is not already expanded.
   @override
   void expand() {
-    assert(_state != null);
-    var controller = _this;
-    controller != null ? controller.expand() : super.expand();
+    if (!_validate()) {
+      return;
+    }
+    _this != null ? _this!.expand() : super.expand();
   }
 
   /// Collapses the [ExpansionTileItem] widget.
   /// This method collapses the [ExpansionTileItem] widget if it is not already collapsed.
   @override
   void collapse() {
-    assert(_state != null);
-    var controller = _this;
-    controller != null ? controller.collapse() : super.collapse();
+    if (!_validate()) {
+      return;
+    }
+    _this != null ? _this!.collapse() : super.collapse();
   }
 
   /// Rebuild the [ExpansionTileItem] widget.
   /// This method rebuilds the [ExpansionTileItem] widget by calling the setState method.
+  /// The [fn] parameter is an optional callback function that is called after the widget is rebuilt.
   void _refresh([VoidCallback? fn]) {
-    assert(_state != null);
+    if (!_validate()) {
+      return;
+    }
     _state?._setState(fn);
   }
 
   /// Disables the [ExpansionTileItem] widget.
   /// This method disables the [ExpansionTileItem] widget by setting the [isEnabled] property to false.
+  /// The [fn] parameter is an optional callback function that is called after the widget is disabled.
   void disable([VoidCallback? fn]) {
-    assert(_state != null);
-    if (isEnabled) {
+    if (!_validate()) {
+      return;
+    }
+    if (_state!._isEnabled) {
       _refresh(() {
         _state?._isEnabled = false;
         fn?.call();
@@ -479,9 +537,12 @@ class ExpansionTileItemController extends ExpansionTileController {
 
   /// Enables the [ExpansionTileItem] widget.
   /// This method enables the [ExpansionTileItem] widget by setting the [isEnabled] property to true.
+  /// The [fn] parameter is an optional callback function that is called after the widget is enabled.
   void enable([VoidCallback? fn]) {
-    assert(_state != null);
-    if (!isEnabled) {
+    if (!_validate()) {
+      return;
+    }
+    if (!_state!._isEnabled) {
       _refresh(() {
         _state?._isEnabled = true;
         fn?.call();
@@ -491,8 +552,21 @@ class ExpansionTileItemController extends ExpansionTileController {
 
   /// A boolean value that determines whether the [ExpansionTileItem] widget is enabled.
   /// If the [isEnabled] property is true, the [ExpansionTileItem] widget is enabled.
+  /// @return true if the widget is enabled, false otherwise.
   bool get isEnabled {
-    assert(_state != null);
-    return _state!._isEnabled;
+    return _validate() && _state!._isEnabled;
+  }
+
+  bool _validate() {
+    assert(_state != null,
+        "ExpansionTileItemController is not attached to any ExpansionTileItem widget");
+
+    if (_state == null) {
+      dev.log(
+          "Controller is not attached to any ExpansionTileItem widget. (Possibly disposed or not yet initialized)",
+          name: "ExpansionTileItemController");
+      return false;
+    }
+    return true;
   }
 }

@@ -43,6 +43,7 @@ extension ExpansionTileExtension on ExpansionTile {
     ExpansionTileController? controller,
     bool? dense,
     VisualDensity? visualDensity,
+    double? minTileHeight,
     bool? enableFeedback,
     bool? enabled,
     AnimationStyle? expansionAnimationStyle,
@@ -75,6 +76,7 @@ extension ExpansionTileExtension on ExpansionTile {
       controller: controller ?? this.controller,
       dense: dense ?? this.dense,
       visualDensity: visualDensity ?? this.visualDensity,
+      minTileHeight: minTileHeight ?? this.minTileHeight,
       enableFeedback: enableFeedback ?? this.enableFeedback,
       enabled: enabled ?? this.enabled,
       expansionAnimationStyle:

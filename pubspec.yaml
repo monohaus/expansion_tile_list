@@ -1,7 +1,7 @@
 name: expansion_tile_list
 description: >-
   Provides a highly customisable list of expansion tiles with extensive options for appearance, animations, and control over expansion behaviour, while simplifying common features.
-version: 1.0.1
+version: 2.0.0-rc.1
 homepage: https://github.com/monohaus/expansion_tile_list
 repository: https://github.com/monohaus/expansion_tile_list
 issue_tracker: https://github.com/monohaus/expansion_tile_list/issues
