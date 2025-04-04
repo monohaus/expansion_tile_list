@@ -23,7 +23,7 @@ It enables developers to create expandable tile lists with extensive options for
 over the expansion behaviour. The package includes features such as a global trailing widget, trailing animation, and
 various expansion modes to accommodate different use cases.
 
-<img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true"  alt="Basic Usage"  title="Basic Usage"  width="250"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="250"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="250"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="250"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_reorderable.gif?raw=true"  alt="Reorderable"  title="Reorderable"  width="250"/><img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_drag_handle.gif?raw=true"  alt="Drag handle"  title="Drag handle"  width="250"/>
+<img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_basic_usage.gif?raw=true" alt="Basic Usage"  title="Basic Usage"  width="250" style="max-width: 100%; height: auto;"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_trailing.gif?raw=true"  alt="Trailing"  title="Trailing"  width="250" style="max-width: 100%; height: auto;"/> <img  src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_controller.gif?raw=true"  alt="Controller"  title="Controller"  width="250" style="max-width: 100%; height: auto;"/> <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_expansion_mode.gif?raw=true"  alt="Expansion Mode"  title="Expansion Mode"  width="250" style="max-width: 100%; height: auto;"/> <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_reorderable2.gif?raw=true" alt="Reorderable" title="Reorderable" width="250" style="max-width: 100%; height: auto;"/> <img src="https://github.com/monohaus/expansion_tile_list/blob/main/.assets/images/list_drag_handle.gif?raw=true"  alt="Drag handle"  title="Drag handle"  width="250" style="max-width: 100%; height: auto;"/>
 
 ## Features
 
@@ -289,9 +289,6 @@ var expansionTileList = ExpansionTileList(
    `initialExpandedIndexes` i.e. `ExpansionMode.atMostOne` and `ExpansionMode.exactlyOne`, if multiple indexes are
    specified then only the first index at 0 is considered. If the `initialExpandedIndexes` is not specified then the
    first tile is expanded by default.
-
-> **_NOTE:_**  ExpansionMode that allows at lease one tile to be always expanded i.e. `ExpansionMode.atLeastOne` and
-`ExpansionMode.exactlyOne` disables the `ExpansionTile` widget to enforce this rule.
 
 ```dart 
 /// Use ExpansionMode property

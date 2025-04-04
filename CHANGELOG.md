@@ -57,6 +57,8 @@
 - Breaking changes
 - Bug fix: ExpansionTileItemController methods are called when widget is not yet mounted/initialized when not in scroll
   viewport.
+- `ExpansionMode.atLeastOne` and `ExpansionMode.exactlyOne` no longer disables the `ExpansionTile` to enforce the
+  `ExpansionMode` behavior.
 - Removed all the deprecated constructors and properties.
 - Removed `ExpansionTileList.single`, `ExpansionTileList.multiple` and `ExpansionTileList.separator` named constructors.
 - Removed `scrollable` property in favor a default support of scrolling in ExpansionTileList.

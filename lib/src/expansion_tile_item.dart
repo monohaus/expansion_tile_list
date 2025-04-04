@@ -44,7 +44,7 @@ class ExpansionTileItem extends ExpansionTile {
     super.controller,
     super.dense,
     super.visualDensity,
-    super.minTileHeight,
+    //super.minTileHeight,
     super.enableFeedback,
     super.enabled,
     super.expansionAnimationStyle,
@@ -124,7 +124,7 @@ class ExpansionTileItem extends ExpansionTile {
           controller: controller ?? expansionTile.controller,
           dense: dense ?? expansionTile.dense,
           visualDensity: visualDensity ?? expansionTile.visualDensity,
-          minTileHeight: minTileHeight ?? expansionTile.minTileHeight,
+          // minTileHeight: minTileHeight ?? expansionTile.minTileHeight,
           enableFeedback: enableFeedback ?? expansionTile.enableFeedback,
           enabled: enabled ?? expansionTile.enabled,
           expansionAnimationStyle:
