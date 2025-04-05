@@ -86,4 +86,4 @@ jobs:
 
       - name: Publish to pub.dev
         if: success()
-        run: flutter pub publish --force
+        run: flutter pub publish --force -v
