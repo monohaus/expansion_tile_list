@@ -54,6 +54,6 @@ jobs:
 
       - name: Publish to pub.dev
         if: success()
-        run: echo "$PUB_CREDENTIALS" > ~/.pub-cache/credentials.json && flutter pub publish --force
+        run: echo "$PUB_CREDENTIALS" > "$PUB_CACHE/credentials.json" && flutter pub publish --force
         env:
           PUB_CREDENTIALS: ${{ secrets.PUB_DEV_PUBLISH_TOKEN }}
