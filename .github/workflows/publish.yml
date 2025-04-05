@@ -2,15 +2,11 @@ name: Publish Package
 
 on:
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
     inputs:
-      latest:
-        description: 'Latest: release the latest image'
-        type: boolean
-        default: true
       version:
-        description: 'Version: image version/tag to release'
+        description: 'Version: version/tag to release (e.g., v1.0.0 or 1.0.0)'
         type: string
         required: false
 
@@ -20,6 +16,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version && format('refs/tags/{0}', inputs.version) || ''}}
+
+      - name: Print Git information
+        run: |
+          echo "Git Reference (ref): ${{ github.ref }}"
+          echo "Git Ref Name (branch/tag): ${{ github.ref_name }}"
+          echo "Commit SHA: $(git rev-parse HEAD)"
+          echo "Current Branch (if applicable): $(git branch --show-current)"
+          echo "Tag (if applicable): $(git describe --tags --exact-match 2>/dev/null || echo 'Not a tag')"
 
       - name: Setup Flutter SDK
         uses: flutter-actions/setup-flutter@v4
