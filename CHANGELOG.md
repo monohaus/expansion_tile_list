@@ -52,7 +52,7 @@
 - Added multiple scrollable properties to `ExpansionTileList` to customize the scroll behavior.
 - Support for `padding` in `ExpansionTileList` to add padding to the list.
 
-## 2.0.0-rc.1
+## 2.0.0-rc
 
 - Breaking changes
 - Bug fix: ExpansionTileItemController methods are called when widget is not yet mounted/initialized when not in scroll

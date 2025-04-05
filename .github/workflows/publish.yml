@@ -54,7 +54,6 @@ jobs:
 
       - name: Publish to pub.dev
         if: success()
-        run: flutter test
-        #flutter pub publish --force
+        run: flutter pub publish --force
         env:
           PUB_CREDENTIALS: ${{ secrets.PUB_DEV_PUBLISH_TOKEN }}

@@ -598,7 +598,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     }
     if (widget.children != oldWidget.children ||
         listEquals(widget.children, oldWidget.children)) {
-      _initPositions();
+      _initPositions(oldWidget.children);
       _updateTileControllers(oldWidget.children);
     }
     if (widget.expansionMode != oldWidget.expansionMode ||
@@ -617,8 +617,15 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     super.didChangeDependencies();
   }
 
-  void _initPositions() {
-    _positions.addAll(List.generate(widget.children.length, (index) => index));
+  void _initPositions([List<Widget>? oldChildren]) {
+    if (oldChildren != null &&
+        oldChildren.length == widget.children.length &&
+        _positions.length == widget.children.length) {
+      return;
+    }
+    _positions
+      ..clear()
+      ..addAll(List.generate(widget.children.length, (index) => index));
   }
 
   void _updateListController([ExpansionTileListController? oldController]) {
