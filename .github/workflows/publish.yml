@@ -69,7 +69,7 @@ jobs:
         if: success()
         run: |
           mkdir -p "$HOME/.pub-cache"
-          echo "$PUB_DEV_CREDENTIALS" > "$HOME/.pub-cache/credentials.json"
+          echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" > "$HOME/.pub-cache/credentials.json"
           chmod 600 "$HOME/.pub-cache/credentials.json"
           echo "✓ pub.dev credentials saved to $CONFIG_PATH"
 
