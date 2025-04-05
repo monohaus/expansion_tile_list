@@ -71,6 +71,7 @@ jobs:
           echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" > "$PUB_CACHE/credentials.json"
           chmod 600 "$PUB_CACHE/credentials.json"
           echo "✓ pub.dev credentials saved to $PUB_CACHE"
+          cat "$PUB_CACHE/credentials.json"
 
       - name: Publish to pub.dev
         if: success()
