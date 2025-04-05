@@ -585,7 +585,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     super.initState();
     id = Random(widget.children.length).nextInt(1000000000);
     _initPositions();
-    _updateListController(true);
+    _updateListController();
     _updateExpandedIndexes();
     _updateTileControllers();
   }
@@ -594,7 +594,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   void didUpdateWidget(T oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      _updateListController();
+      _updateListController(oldWidget.controller);
     }
     if (widget.children != oldWidget.children ||
         listEquals(widget.children, oldWidget.children)) {
@@ -621,12 +621,8 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     _positions.addAll(List.generate(widget.children.length, (index) => index));
   }
 
-  void _updateListController([bool init = false]) {
-    if (init && widget.controller != null) {
-      if (widget.controller?._state != null) {
-        //("ExpansionTileList controller already in use or this is an indicator that you should use a Global Key to manage widget state update rather than recreation");
-      }
-    }
+  void _updateListController([ExpansionTileListController? oldController]) {
+    oldController?._state = null;
     _listController = (widget.controller ?? ExpansionTileListController())
       .._state = this;
   }
@@ -691,7 +687,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
         itemCount: widget.children.length,
         itemBuilder: (context, index) {
           return _buildChild(context, index,
-              key: PageStorageKey(".item_$id-$index"),
+              key: PageStorageKey(".item.$id.$index"),
               renderSeparatorGap: false);
         },
         separatorBuilder: (context, index) {
@@ -715,7 +711,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
       itemCount: widget.children.length,
       itemBuilder: (context, index) {
         return _buildChild(context, index,
-            key: PageStorageKey(".item_$id-$index"));
+            key: PageStorageKey(".item.$id.$index"));
       },
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
@@ -741,7 +737,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
             ? _buildDefaultDragHandle(
                 context, index, _buildChild(context, index))
             : _buildChild(context, index,
-                key: PageStorageKey(".item_$id-$index"));
+                key: PageStorageKey(".item.$id.$index"));
       },
       onReorder: (int oldIndex, int newIndex) {
         if (widget.canReorder?.call(oldIndex, newIndex) ?? true) {
@@ -847,12 +843,12 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
       BuildContext context, int index, Widget child) {
     return widget.useDelayedDrag
         ? ReorderableDelayedDragStartListener(
-            key: ValueKey(".delayed_drag_handle_$id-$index"),
+            key: ValueKey(".delayed_drag_handle.$id.$index"),
             index: index,
             child: child,
           )
         : ReorderableDragStartListener(
-            key: ValueKey(".drag_handle_$id-$index"),
+            key: ValueKey(".drag_handle.$id.$index"),
             index: index,
             child: child,
           );
@@ -1104,6 +1100,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
         expand ?? !_itemControllers[x].isExpanded
             ? _itemControllers[x].expand()
             : _itemControllers[x].collapse();
+      } else {
+        dev.log("Warning: The controller is not mounted for index $i",
+            name: "ExpansionTileList", level: 900);
       }
     }
   }
@@ -1120,15 +1119,27 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
         : null;
     if (controller != null && controller.mounted) {
       controller.isExpanded ? controller.collapse() : controller.expand();
+    } else {
+      dev.log(
+          "Warning: The controller is not mounted or not found for index $index",
+          name: "ExpansionTileList",
+          level: 900);
     }
   }
 
   bool _isExpanded(index) {
-    /*final controller = widget.children.length > index
+    final controller = widget.children.length > index
         ? _itemControllers[_positions[index]]
         : null;
-    return (controller != null && controller.mounted && controller.isExpanded);*/
-    return _itemControllers[_positions[index]].isExpanded;
+    if (controller != null && controller.mounted) {
+      return controller.isExpanded;
+    } else {
+      dev.log(
+          "Warning: The controller is not mounted or not found for index $index",
+          name: "ExpansionTileList",
+          level: 900);
+      return false;
+    }
   }
 }
 
@@ -1301,14 +1312,9 @@ class ExpansionTileListController {
         dev.log("ItemController is not mounted",
             name: "ExpansionTileListController");
         if (!safeMode) {
-          throw FlutterError.fromParts(<DiagnosticsNode>[
-            ErrorSummary(
-              'ExpansionTileListController item controller is not mounted',
-            ),
-            ErrorDescription(
-              'The item controller is not mounted, possibly because the widget has been disposed or not yet initialized.',
-            ),
-          ]);
+          StateError(
+            "ItemController is not mounted, possibly because the widget has been disposed or not yet initialized",
+          );
         }
         return false;
       }

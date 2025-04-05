@@ -371,12 +371,12 @@ class _ExpansionTileItemState extends State<ExpansionTileItem>
   }
 
   void _updateExpansionTileItemController([bool init = false]) {
-    if (widget.controller is ExpansionTileItemController) {
-      if (init) {
-        if ((widget.controller as ExpansionTileItemController)._state != null) {
-          //("ExpansionTile controller already in use or this is an indicator that you should use a Global Key to manage widget state update rather than recreation");
-        }
+    if (!init) {
+      if (_controller is ExpansionTileItemController) {
+        (_controller as ExpansionTileItemController)._state = null;
       }
+    }
+    if (widget.controller is ExpansionTileItemController) {
       _controller = (widget.controller as ExpansionTileItemController
                 .._state = this)
               .delegate ??
