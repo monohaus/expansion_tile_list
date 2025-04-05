@@ -68,13 +68,19 @@ jobs:
       - name: Prepare pub.dev credentials
         if: success()
         run: |
+          CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/dart/pub-credentials.json"
+          mkdir -p "$(dirname "$CONFIG_PATH")"
+          echo "${{ secrets.PUB_DEV_CREDENTIALS }}" > "$CONFIG_PATH"
+          chmod 600 "$CONFIG_PATH"
+          echo "✓ pub.dev credentials saved to $CONFIG_PATH"
+          
           mkdir -p "$HOME/.pub-cache"
           echo "${{ secrets.PUB_DEV_CREDENTIALS }}" > "$HOME/.pub-cache/credentials.json"
           chmod 600 "$HOME/.pub-cache/credentials.json"
           echo "✓ pub.dev credentials saved to $HOME/.pub-cache"
           cat "$HOME/.pub-cache/credentials.json"
           
-          echo "${{ secrets.PUB_DEV_CREDENTIALS }}" > "$PUB_CACHE/credentials.json"
+          echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" > "$PUB_CACHE/credentials.json"
           chmod 600 "$PUB_CACHE/credentials.json"
           echo "✓ pub.dev credentials saved to $PUB_CACHE"
 
