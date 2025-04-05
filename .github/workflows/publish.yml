@@ -3,6 +3,16 @@ name: Publish Package
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      latest:
+        description: 'Latest: release the latest image'
+        type: boolean
+        default: true
+      version:
+        description: 'Version: image version/tag to release'
+        type: string
+        required: false
 
 jobs:
   publish:
@@ -22,7 +32,7 @@ jobs:
 
       - name: Check code formatting
         run: |
-          flutter format --set-exit-if-changed .
+          dart format --set-exit-if-changed .
           echo "✓ Code formatting is correct"
 
       - name: Run analyzer
@@ -33,7 +43,8 @@ jobs:
 
       - name: Verify pubspec
         run: |
-          flutter pub outdated --mode=null-safety
+          flutter pub upgrade --major-versions
+          flutter test
           flutter pub publish --dry-run
 
       - name: Publish to pub.dev
