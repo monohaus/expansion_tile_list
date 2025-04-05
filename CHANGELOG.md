@@ -70,3 +70,6 @@
 - Support for customizable drag handle in reorderable list using `dragHandleBuilder`, `dragHandlePlacement` and
   `dragHandleAlignment` properties.
 - Support for callback functions in reorderable list when reordering.
+
+## 2.0.0-rc.1
+- automatic deployment to pub.dev
