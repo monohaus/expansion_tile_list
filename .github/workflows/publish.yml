@@ -68,10 +68,9 @@ jobs:
       - name: Prepare pub.dev credentials
         if: success()
         run: |
-          mkdir -p "$HOME/.pub-cache"
-          echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" > "$HOME/.pub-cache/credentials.json"
-          chmod 600 "$HOME/.pub-cache/credentials.json"
-          echo "✓ pub.dev credentials saved to $CONFIG_PATH"
+          echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" > "$PUB_CACHE/credentials.json"
+          chmod 600 "$PUB_CACHE/credentials.json"
+          echo "✓ pub.dev credentials saved to $PUB_CACHE"
 
       - name: Publish to pub.dev
         if: success()
