@@ -70,9 +70,9 @@ jobs:
         run: |
           CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/dart/pub-credentials.json"
           mkdir -p "$(dirname "$CONFIG_PATH")"
-          ACCESS_TOKEN=$(echo "${{ secrets.PUB_DEV_CREDENTIALS }}" | jq -r '.accessToken')
-          REFRESH_TOKEN=$(echo "${{ secrets.PUB_DEV_CREDENTIALS }}" | jq -r '.refreshToken')
-          echo "${{ secrets.PUB_DEV_CREDENTIALS }}" > "$CONFIG_PATH"
+          ACCESS_TOKEN=$(echo "$PUB_DEV_CREDENTIALS" | jq -r '.accessToken')
+          REFRESH_TOKEN=$(echo "$PUB_DEV_CREDENTIALS" | jq -r '.refreshToken')
+          echo "$PUB_DEV_CREDENTIALS" > "$CONFIG_PATH"
           chmod 600 "$CONFIG_PATH"
           echo "✓ pub.dev credentials saved to $CONFIG_PATH"
         env:

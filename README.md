@@ -42,7 +42,7 @@ their expansion programmatically.
     - [Contributing](#contributing)
     - [Visitors](#visitors)
     - [License](#license)
-  
+
 ## Description
 
 The `expansion_tile_list` package offers a highly customizable list of `expansion_tile` items for Flutter applications.
@@ -121,12 +121,12 @@ Import the package:
 import 'package:expansion_tile_list/expansion_tile_list.dart';
 ```
 
-## Example
-
 Here are some simple examples of how to use the `ExpansionTileList`: check out
 the [demo](https://monohaus.github.io/expansion_tile_list_demo/)
 
-1. Basic usage: create a list of `ExpansionTile` widgets using the `ExpansionTileList` widget.
+### Basic
+
+* Simple usage: create a list of `ExpansionTile` widgets using the `ExpansionTileList` widget.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -164,8 +164,8 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-2. Using `trailing` and `trailingAnimation`: use the `trailing` and `trailingAnimation` properties to customize the
-   trailing widget of the tiles.
+* Using `trailing` and `trailingAnimation`: use the `trailing` and `trailingAnimation` properties to customize the
+  trailing widget of the tiles.
 
 ```dart
 
@@ -309,8 +309,8 @@ var expansionTileList = ExpansionTileList(
   ],
 );
 ```
-
-7. Using `ExpansionMode`: Use `ExpansionMode` property of the `ExpansionTileList` widget to control the expansion of the
+### ExpansionMode
+* Using `ExpansionMode`: Use `ExpansionMode` property of the `ExpansionTileList` widget to control the expansion of the
    tiles. The `initialExpandedIndexes` property allows you to specify the indexes of the tiles that are initially
    expanded. `ExpansionMode` that enforces a single tile expansions at a time expects a single index in the array
    `initialExpandedIndexes` i.e. `ExpansionMode.atMostOne` and `ExpansionMode.exactlyOne`, if multiple indexes are
@@ -461,8 +461,10 @@ var expansionTileList = ExpansionTileList(
 );
 ```
 
-11. Using `ExapnsionTileList.reorderable`: Use the `ExpansionTileList.reorderable` constructor to enable the list to be
-    reorderable by dragging the items.
+### Reorderable
+
+* Using `ExapnsionTileList.reorderable`: Use the `ExpansionTileList.reorderable` constructor to enable the list to be
+  reorderable by dragging the items.
 
 ```dart
 
@@ -480,8 +482,7 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-12. Using `reorderable` with callbacks: Use the callbacks to listen to the reordering of the items
-    in the list.
+* Using callbacks with `reorderable` : Use the callbacks to listen to the reordering of the items in the list.
 
 ```dart
 // Use the canReorder and onReorder callback
@@ -524,9 +525,28 @@ var expansionTileList = ExpansionTileList.reorderable(
   ],
 );
 ```
+* Using `useDelayedDrag`: Use the `useDelayedDrag` property to enable delayed drag (long press) to start reordering the items in
+  the list.
+```dart
 
-13. Using `proxyDecorator`: Use the `proxyDecorator` property to customize the appearance of the proxy item that is
-    displayed while reordering the items in the list.
+var expansionTileList = ExpansionTileList.reorderable(
+  useDelayedDrag: true, // enable delayed drag (long press) to start reordering
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+```dart
+* Using `proxyDecorator`: Use the `proxyDecorator` property to customize the appearance of the proxy item that is
+  displayed while reordering the items in the list.
 
 ```dart
 
@@ -554,11 +574,15 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-14. Using `enableDefaultDragHandles` : Use the `enableDefaultDragHandles` property to enable the default drag handles
-    for
-    the
-    reorderable list and `useDelayedDrag` for a long press to trigger reordering. The default drag handles makes the
-    whole `ExpansionTile` item draggable. This can be set to false when a custom drag handle is required.
+### Drag Handle
+
+> **_NOTE:_** The drag handle is a widget used to reorder the items in the list by dragging.
+
+* Using `enableDefaultDragHandles` : Use the `enableDefaultDragHandles` property to enable the default drag handles
+  for
+  the
+  reorderable list and `useDelayedDrag` for a long press to trigger reordering. The default drag handles makes the
+  whole `ExpansionTile` item draggable. This can be set to false when a custom drag handle is required.
 
 ```dart
 
@@ -579,9 +603,9 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-15. Using DragHandlePlacement: Use the `dragHandlePlacement` property to specify the placement of the drag handle for
-    the
-    reorderable list.
+* Using DragHandlePlacement: Use the `dragHandlePlacement` property to specify the placement of the drag handle for
+  the
+  reorderable list.
 
 ```dart
 
@@ -600,11 +624,13 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-16. Using dragHandleAlignment: Use the `dragHandleAlignment` property to specify the horizontal alignment of the drag handle relative to its placement for
-    the reorderable list.
+* Using dragHandleAlignment: Use the `dragHandleAlignment` property to specify the horizontal alignment of the drag
+  handle relative to its placement for
+  the reorderable list.
 
 ```dart
- var expansionTileList = ExpansionTileList.reorderable(
+
+var expansionTileList = ExpansionTileList.reorderable(
   dragHandleAlignment: HorizontalAlignment.centerRight, // defaults to HorizontalAlignment.centerLeft if not specified
   children: <ExpansionTile>[
     ExpansionTile(
@@ -619,10 +645,10 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-17. Using dragHandleBuilder: Use the `dragHandleBuilder` property to customize the appearance of the drag handle for the
-    reorderable list based on the DragHandlePlacement value. `NOTE`: DragHandlePlacement.none does not call the
-    dragHandleBuilder. The dragHandleBuilder can be used as a custom drag handle when the enableDefaultDragHandles is
-    set to false.
+* Using dragHandleBuilder: Use the `dragHandleBuilder` property to customize the appearance of the drag handle for the
+  reorderable list based on the DragHandlePlacement value. `NOTE`: DragHandlePlacement.none does not call the
+  dragHandleBuilder. The dragHandleBuilder can be used as a custom drag handle when the enableDefaultDragHandles is
+  set to false.
 
 ```dart
 
@@ -687,9 +713,9 @@ var expansionTileList = ExpansionTileList.reorderable(
 
 ```
 
-18. Using Custom Drag Handle: Disable the default drag handles and use either the `ReorderableDragStartListener` or
-    `ReorderableDelayedDragStartListener` to create
-    a custom drag handle for the reorderable list.
+* Using Custom Drag Handle: Disable the default drag handles and use either the `ReorderableDragStartListener` or
+  `ReorderableDelayedDragStartListener` to create
+  a custom drag handle for the reorderable list.
     1. create a custom drag handle (e.g Icon)
     2. set enableDefaultDragHandles to false
     3. create an ExpansionTileController to programmatically control the tiles and access the position of the tiles
