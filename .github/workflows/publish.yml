@@ -70,19 +70,13 @@ jobs:
         run: |
           CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/dart/pub-credentials.json"
           mkdir -p "$(dirname "$CONFIG_PATH")"
-          ACCESS_TOKEN=$(echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" | jq -r '.accessToken')
-          REFRESH_TOKEN=$(echo "${{ secrets.PUB_DEV_PUBLISH_TOKEN }}" | jq -r '.refreshToken')
-          cat <<-EOF > "$CONFIG_PATH"
-          {
-            "accessToken":"$ACCESS_TOKEN",
-            "refreshToken":"$REFRESH_TOKEN",
-            "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
-            "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-            "expiration": 1743881542993
-          }
-          EOF
+          ACCESS_TOKEN=$(echo "${{ secrets.PUB_DEV_CREDENTIALS }}" | jq -r '.accessToken')
+          REFRESH_TOKEN=$(echo "${{ secrets.PUB_DEV_CREDENTIALS }}" | jq -r '.refreshToken')
+          echo "${{ secrets.PUB_DEV_CREDENTIALS }}" > "$CONFIG_PATH"
           chmod 600 "$CONFIG_PATH"
           echo "✓ pub.dev credentials saved to $CONFIG_PATH"
+        env:
+          PUB_DEV_CREDENTIALS: ${{ secrets.PUB_DEV_CREDENTIALS }}
 
       - name: Publish to pub.dev
         if: success()
