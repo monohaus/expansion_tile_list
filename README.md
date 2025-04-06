@@ -16,6 +16,33 @@ their expansion programmatically.
 [![Github](https://img.shields.io/badge/Demo-ExpansionTileList-red)](https://monohaus.github.io/expansion_tile_list_demo/)
 [![Test](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml/badge.svg)](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml)
 
+# Table of Contents
+
+- [Expansion Tile List](#expansion-tile-list)
+    - [Description](#description)
+    - [Features](#features)
+        - [List Features](#list-features)
+        - [Item Features](#item-features)
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [Example](#example)
+    - [How Drag Handle works](#how-drag-handle-works)
+    - [How initialExpandedIndexes with ExpansionMode works](#how-initialexpandedindexes-with-expansionmode-works)
+    - [How itemGapSize and separatorBuilder layout works](#how-itemgapsize-and-separatorbuilder-layout-works)
+    - [How ExpansionTileList current position and initial position works](#how-expansiontilelist-current-position-and-initial-position-works)
+        - [Method: initialPosition](#method--initialposition)
+        - [Method: currentPosition](#method--currentposition)
+    - [List Properties](#list-properties)
+    - [Scrollable Properties](#scrollable-properties)
+    - [Reorderable Properties](#reorderable-properties)
+    - [Item Properties](#item-properties)
+    - [Testing](#testing)
+    - [Troubleshooting](#troubleshooting)
+    - [Known Issues & Fixes](#known-issues--fixes)
+    - [Contributing](#contributing)
+    - [Visitors](#visitors)
+    - [License](#license)
+  
 ## Description
 
 The `expansion_tile_list` package offers a highly customizable list of `expansion_tile` items for Flutter applications.
