@@ -1,7 +1,5 @@
 # Expansion Tile List
 
-> Leave a thumbs up 👍 if you like the package.
-
 The `ExpansionTileList` serves as a container for the `ExpansionTile` widget, enabling the creation of a list of
 `ExpansionTile` items. It offers additional features that allow you to customize the appearance of the tiles and control
 their expansion programmatically.
@@ -16,32 +14,35 @@ their expansion programmatically.
 [![Github](https://img.shields.io/badge/Demo-ExpansionTileList-red)](https://monohaus.github.io/expansion_tile_list_demo/)
 [![Test](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml/badge.svg)](https://github.com/monohaus/expansion_tile_list/actions/workflows/test.yml)
 
-# Table of Contents
+## Table of Contents
 
-- [Expansion Tile List](#expansion-tile-list)
-    - [Description](#description)
-    - [Features](#features)
-        - [List Features](#list-features)
-        - [Item Features](#item-features)
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [Example](#example)
-    - [How Drag Handle works](#how-drag-handle-works)
-    - [How initialExpandedIndexes with ExpansionMode works](#how-initialexpandedindexes-with-expansionmode-works)
-    - [How itemGapSize and separatorBuilder layout works](#how-itemgapsize-and-separatorbuilder-layout-works)
-    - [How ExpansionTileList current position and initial position works](#how-expansiontilelist-current-position-and-initial-position-works)
-        - [Method: initialPosition](#method--initialposition)
-        - [Method: currentPosition](#method--currentposition)
-    - [List Properties](#list-properties)
-    - [Scrollable Properties](#scrollable-properties)
-    - [Reorderable Properties](#reorderable-properties)
-    - [Item Properties](#item-properties)
-    - [Testing](#testing)
-    - [Troubleshooting](#troubleshooting)
-    - [Known Issues & Fixes](#known-issues--fixes)
-    - [Contributing](#contributing)
-    - [Visitors](#visitors)
-    - [License](#license)
+- [Description](#description)
+- [Features](#features)
+    - [List Features](#list-features)
+    - [Item Features](#item-features)
+- [Installation](#installation)
+- [Usage](#usage)
+    - [Basic](#basic)
+    - [Separator And Gap](#separator-and-gap)
+    - [Controller](#controller)
+    - [ExpansionMode](#expansionmode)
+    - [ExpansionTileItem](#expansiontileitem)
+    - [Reorderable](#reorderable)
+    - [Drag Handle](#drag-handle)
+- [How Drag Handle works](#how-drag-handle-works)
+- [How initialExpandedIndexes with ExpansionMode works](#how-initialexpandedindexes-with-expansionmode-works)
+- [How itemGapSize and separatorBuilder layout works](#how-itemgapsize-and-separatorbuilder-layout-works)
+- [How ExpansionTileList current position and initial position works](#how-expansiontilelist-current-position-and-initial-position-works)
+    - [Method: initialPosition](#method-initialposition)
+    - [Method: currentPosition](#method-currentposition)
+- [List Properties](#list-properties)
+- [Scrollable Properties](#scrollable-properties)
+- [Reorderable Properties](#reorderable-properties)
+- [Item Properties](#item-properties)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Known Issues & Fixes](#known-issues--fixes)
+- [Contributing](#contributing)
 
 ## Description
 
@@ -88,9 +89,13 @@ All the features affects all the tiles in the `ExpansionTileList`.
     - `ExpansionMode.exactlyOne` allows you to expand exactly one tile at a time. (i.e. one )
     - `ExpansionMode.any` allows you to expand any number of tiles. (i.e. zero or more )
 - `separatorAlignment` allows you to specify the alignment of the `separator` against the space `itemGapSize` between
-  the tiles in the `ExpansionTileList`.
+  the tiles in the `ExpansionTileList`
 - ![new](https://img.shields.io/badge/new-brightgreen) `ExpansionTileList.reorderable` enable the list to be reorderable
   by dragging the items.
+- ![new](https://img.shields.io/badge/new-brightgreen) Reorderable callbacks e.g `canReorder` `onReorder` allows you to
+  specify a callback to control the behavior of the list item reordering.
+- ![new](https://img.shields.io/badge/new-brightgreen) `dragHandleBuilder` allows you to customize the appearance of the
+  drag handle for the reorderable list.
 
 ### `Item Features`
 
@@ -196,38 +201,7 @@ ExpansionTileList(
 );
 ```
 
-3. Using `separatorBuilder`: This property allows you to customize the appearance of the separators between the
-   `ExpansionTile` items in the list.
-
-> **_NOTE:_** The `separatorAlignment` can be used to specify the alignment of the separator against the space
-`itemGapSize` between the tiles in the `ExpansionTileList`.
-
-```dart
-
-var expansionTileList =
-ExpansionTileList(
-  separatorAlignment: Alignment.topCenter, // defaults to Alignment.bottomCenter if not specified
-  separatorBuilder: (context, index, value, child) {
-    return Divider(
-      color: Colors.blue,
-      height: 2.0,
-    );
-  },
-  children: <ExpansionTile>[
-    ExpansionTile(
-      title: Text('Tile 1'),
-      children: <Widget>[Text('Child 1')],
-    ),
-    ExpansionTile(
-      title: Text('Tile 2'),
-      children: <Widget>[Text('Child 2')],
-    ),
-  ],
-);
-
-```
-
-4. Using `itemBuilder`: This property allows you to customize the appearance of the items in the list.
+* Using `itemBuilder`: This property allows you to customize the appearance of the items in the list.
 
 ```dart
 
@@ -251,7 +225,104 @@ var expansionTileList = ExpansionTileList(
 );
 ```
 
-5. Using `controller`: This property allows you to programmatically control the expansion of the `ExpansionTile` items.
+* Using `onExpansionChanged`: This property allows you to listen to the expansion changes of the tiles.
+
+```dart
+
+var expansionTileList = ExpansionTileList(
+  onExpansionChanged: (index, isExpanded) {
+    print('Tile $index is ${isExpanded ? 'expanded' : 'collapsed'}');
+  },
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+### Separator And Gap
+
+> **_See Also_:
+** [How itemGapSize and separatorBuilder layout works](#how-itemgapsize-and-separatorbuilder-layout-works)
+
+* Using `itemGapSize`: This property allows you to specify the size of the gap between each tile in the list.
+
+```dart
+
+var expansionTileList = ExpansionTileList(
+  itemGapSize: 10.0, // defaults to 0.0 if not specified
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+* Using `separatorBuilder`: This property allows you to customize the appearance of the separators between the
+  `ExpansionTile` items in the list.
+
+```dart
+
+var expansionTileList =
+ExpansionTileList(
+  separatorAlignment: Alignment.topCenter, // defaults to Alignment.bottomCenter if not specified
+  separatorBuilder: (context, index, value, child) {
+    return Divider(
+      color: Colors.blue,
+      height: 2.0,
+    );
+  },
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+* Using `separatorAlignment`: This property allows you to specify the alignment of the separator against the space
+  `itemGapSize` between the tiles in the list.
+
+```dart
+
+var expansionTileList = ExpansionTileList(
+  separatorAlignment: Alignment.topCenter, // defaults to Alignment.bottomCenter if not specified
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+### Controller
+
+> **_See Also_:
+**  [How ExpansionTileList current position and initial position works](#how-expansiontilelist-current-position-and-initial-position-works)
+
+* Using `controller`: This property allows you to programmatically control the expansion of the `ExpansionTile` items.
 
 ```dart
 
@@ -286,36 +357,29 @@ _() {
 
   /// Collapse all tiles
   controller.collapseAll();
+
+  ///
+  controller.toggleAll();
+
+  ///
+  controller.initialPosition(currentPosition);
+
+  ///
+  controller.currentPosition(initialPosition);
 }
 ```
 
-6. Using `onExpansionChanged`: This property allows you to listen to the expansion changes of the tiles.
-
-```dart
-
-var expansionTileList = ExpansionTileList(
-  onExpansionChanged: (index, isExpanded) {
-    print('Tile $index is ${isExpanded ? 'expanded' : 'collapsed'}');
-  },
-  children: <ExpansionTile>[
-    ExpansionTile(
-      title: Text('Tile 1'),
-      children: <Widget>[Text('Child 1')],
-    ),
-    ExpansionTile(
-      title: Text('Tile 2'),
-      children: <Widget>[Text('Child 2')],
-    ),
-  ],
-);
-```
 ### ExpansionMode
+
+> **_See Also_:
+** [How initialExpandedIndexes with ExpansionMode works](#how-initialexpandedindexes-with-expansionmode-works)
+
 * Using `ExpansionMode`: Use `ExpansionMode` property of the `ExpansionTileList` widget to control the expansion of the
-   tiles. The `initialExpandedIndexes` property allows you to specify the indexes of the tiles that are initially
-   expanded. `ExpansionMode` that enforces a single tile expansions at a time expects a single index in the array
-   `initialExpandedIndexes` i.e. `ExpansionMode.atMostOne` and `ExpansionMode.exactlyOne`, if multiple indexes are
-   specified then only the first index at 0 is considered. If the `initialExpandedIndexes` is not specified then the
-   first tile is expanded by default.
+  tiles. The `initialExpandedIndexes` property allows you to specify the indexes of the tiles that are initially
+  expanded. `ExpansionMode` that enforces a single tile expansions at a time expects a single index in the array
+  `initialExpandedIndexes` i.e. `ExpansionMode.atMostOne` and `ExpansionMode.exactlyOne`, if multiple indexes are
+  specified then only the first index at 0 is considered. If the `initialExpandedIndexes` is not specified then the
+  first tile is expanded by default.
 
 ```dart 
 /// Use ExpansionMode property
@@ -384,8 +448,13 @@ var expansionTileList = ExpansionTileList(
 
 ```
 
-8. Using `ExpansionTileItem`: Use the `ExpansionTileItem` widget to customize the trailing widget
-   of the tiles.
+### ExpansionTileItem
+
+ExpansionTileItem is an alternative to the default ExpansionTile, it intend to provide more fine grained control over
+the default where necessary.
+
+* Using `ExpansionTileItem`: Use the `ExpansionTileItem` widget to customize the trailing widget
+  of the tiles.
 
 ```dart
 
@@ -405,8 +474,8 @@ var expansionTileList = ExpansionTileList(
 );
 ```
 
-9. Using `ExpansionTileItem` with `trailingAnimation`: Use the `ExpansionTileItem` widget with
-   the `trailingAnimation` property to customize the trailing widget of the tiles.
+* Using `ExpansionTileItem` with `trailingAnimation`: Use the `ExpansionTileItem` widget with
+  the `trailingAnimation` property to customize the trailing widget of the tiles.
 
 ```dart
 
@@ -428,8 +497,8 @@ var expansionTileList = ExpansionTileList(
 );
 ```
 
-10. Using `ExpansionTileItem` with `trailingAnimationBuilder`: Use the `ExpansionTileItem` widget
-    with the `trailingAnimationBuilder` property to customize the trailing widget of the tiles.
+* Using `ExpansionTileItem` with `trailingAnimationBuilder`: Use the `ExpansionTileItem` widget with the
+  `trailingAnimationBuilder` property to customize the trailing widget of the tiles.
 
 ```dart
 
@@ -525,8 +594,11 @@ var expansionTileList = ExpansionTileList.reorderable(
   ],
 );
 ```
-* Using `useDelayedDrag`: Use the `useDelayedDrag` property to enable delayed drag (long press) to start reordering the items in
+
+* Using `useDelayedDrag`: Use the `useDelayedDrag` property to enable delayed drag (long press) to start reordering the
+  items in
   the list.
+
 ```dart
 
 var expansionTileList = ExpansionTileList.reorderable(
@@ -544,7 +616,6 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-```dart
 * Using `proxyDecorator`: Use the `proxyDecorator` property to customize the appearance of the proxy item that is
   displayed while reordering the items in the list.
 
@@ -570,7 +641,8 @@ var expansionTileList = ExpansionTileList.reorderable(
       title: Text('Tile 2'),
       children: <Widget>[Text('Child 2')],
     ),
-  ],
+  ]
+  ,
 );
 ```
 
@@ -578,10 +650,8 @@ var expansionTileList = ExpansionTileList.reorderable(
 
 > **_NOTE:_** The drag handle is a widget used to reorder the items in the list by dragging.
 
-* Using `enableDefaultDragHandles` : Use the `enableDefaultDragHandles` property to enable the default drag handles
-  for
-  the
-  reorderable list and `useDelayedDrag` for a long press to trigger reordering. The default drag handles makes the
+* Using `enableDefaultDragHandles` : Use the `enableDefaultDragHandles` property to enable the default drag handles for
+  the reorderable list and `useDelayedDrag` for a long press to trigger reordering. The default drag handles makes the
   whole `ExpansionTile` item draggable. This can be set to false when a custom drag handle is required.
 
 ```dart
@@ -603,8 +673,7 @@ var expansionTileList = ExpansionTileList.reorderable(
 );
 ```
 
-* Using DragHandlePlacement: Use the `dragHandlePlacement` property to specify the placement of the drag handle for
-  the
+* Using DragHandlePlacement: Use the `dragHandlePlacement` property to specify the placement of the drag handle for the
   reorderable list.
 
 ```dart
@@ -625,8 +694,7 @@ var expansionTileList = ExpansionTileList.reorderable(
 ```
 
 * Using dragHandleAlignment: Use the `dragHandleAlignment` property to specify the horizontal alignment of the drag
-  handle relative to its placement for
-  the reorderable list.
+  handle relative to its placement for the reorderable list.
 
 ```dart
 
@@ -647,8 +715,8 @@ var expansionTileList = ExpansionTileList.reorderable(
 
 * Using dragHandleBuilder: Use the `dragHandleBuilder` property to customize the appearance of the drag handle for the
   reorderable list based on the DragHandlePlacement value. `NOTE`: DragHandlePlacement.none does not call the
-  dragHandleBuilder. The dragHandleBuilder can be used as a custom drag handle when the enableDefaultDragHandles is
-  set to false.
+  dragHandleBuilder. The dragHandleBuilder can be used as a custom drag handle when the enableDefaultDragHandles is set
+  to false.
 
 ```dart
 
@@ -714,8 +782,7 @@ var expansionTileList = ExpansionTileList.reorderable(
 ```
 
 * Using Custom Drag Handle: Disable the default drag handles and use either the `ReorderableDragStartListener` or
-  `ReorderableDelayedDragStartListener` to create
-  a custom drag handle for the reorderable list.
+  `ReorderableDelayedDragStartListener` to create a custom drag handle for the reorderable list.
     1. create a custom drag handle (e.g Icon)
     2. set enableDefaultDragHandles to false
     3. create an ExpansionTileController to programmatically control the tiles and access the position of the tiles
@@ -1008,7 +1075,7 @@ _() {
 
 ## Testing
 
-All testcase are available for the package.
+All testcase are available for the [source](https://github.com/monohaus/expansion_tile_list).
 
 - expansion_tile_list_test.dart
 - expansion_tile_item_test.dart
@@ -1090,5 +1157,7 @@ the [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue)](LICE
 file for details.
 
 #
+
+> Leave a thumbs up 👍 if you like the package.
 
 [![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/seun.ogunjimi)

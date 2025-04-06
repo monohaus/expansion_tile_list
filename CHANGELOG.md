@@ -72,4 +72,11 @@
 - Support for callback functions in reorderable list when reordering.
 
 ## 2.0.0-rc.1
+
 - automatic deployment to pub.dev
+
+## 2.0.0
+
+- Final release of 2.0.0
+- Bug fix: Reorder positions duplicated indexes on hot reload
+- Documentation update

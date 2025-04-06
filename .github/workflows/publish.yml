@@ -19,14 +19,6 @@ jobs:
         with:
           ref: ${{ inputs.version && format('refs/tags/{0}', inputs.version) || ''}}
 
-      - name: Print Git information
-        run: |
-          echo "Git Reference (ref): ${{ github.ref }}"
-          echo "Git Ref Name (branch/tag): ${{ github.ref_name }}"
-          echo "Commit SHA: $(git rev-parse HEAD)"
-          echo "Current Branch (if applicable): $(git branch --show-current)"
-          echo "Tag (if applicable): $(git describe --tags --exact-match 2>/dev/null || echo 'Not a tag')"
-
       - name: Setup Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
@@ -47,31 +39,16 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      - name: Verify pubspec
+      - name: Dry run publish
         run: |
           flutter pub outdated
           flutter pub publish --dry-run
-
-      - name: Debug - Print HOME variable
-        run: |
-          echo "Debugging information:"
-          echo "Current working directory: $(pwd)"
-          echo "Current user: $(whoami)"
-          echo "Current date and time: $(date)"
-          echo "Environment variables: $(env)"
-          echo "HOME directory: $HOME"
-          echo "PUB_CACHE: $PUB_CACHE"
-          echo "PUB_HOSTED_URL: $PUB_HOSTED_URL"
-          echo "FLUTTER_ROOT: $FLUTTER_ROOT"
-          echo "XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
 
       - name: Prepare pub.dev credentials
         if: success()
         run: |
           CONFIG_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/dart/pub-credentials.json"
           mkdir -p "$(dirname "$CONFIG_PATH")"
-          ACCESS_TOKEN=$(echo "$PUB_DEV_CREDENTIALS" | jq -r '.accessToken')
-          REFRESH_TOKEN=$(echo "$PUB_DEV_CREDENTIALS" | jq -r '.refreshToken')
           echo "$PUB_DEV_CREDENTIALS" > "$CONFIG_PATH"
           chmod 600 "$CONFIG_PATH"
           echo "✓ pub.dev credentials saved to $CONFIG_PATH"

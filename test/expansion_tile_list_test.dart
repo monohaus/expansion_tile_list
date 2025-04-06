@@ -1766,14 +1766,14 @@ void reorderableWidgetTests() {
   });
 
   testWidgets(
-      "ExpansionTileList dragHandleAlignment.centerRight controls the alignment of the drag handle to the right relative to the DragHandlePlacement",
+      "ExpansionTileList DragHandleAlignment.centerRight controls the alignment of the drag handle to the right relative to the DragHandlePlacement",
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: ExpansionTileList.reorderable(
             dragHandlePlacement: DragHandlePlacement.leading,
-            dragHandleAlignment: HorizontalAlignment.centerRight,
+            dragHandleAlignment: DragHandleAlignment.centerRight,
             dragHandleBuilder: (context, index) {
               return Container(
                 key: ValueKey<String>("drag_handle_$index"),
@@ -1809,14 +1809,14 @@ void reorderableWidgetTests() {
   });
 
   testWidgets(
-      "ExpansionTileList dragHandleAlignment.centerLeft controls the alignment of the drag handle to the left relative to the DragHandlePlacement",
+      "ExpansionTileList DragHandleAlignment.centerLeft controls the alignment of the drag handle to the left relative to the DragHandlePlacement",
       (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: ExpansionTileList.reorderable(
             dragHandlePlacement: DragHandlePlacement.leading,
-            dragHandleAlignment: HorizontalAlignment.centerLeft,
+            dragHandleAlignment: DragHandleAlignment.centerLeft,
             dragHandleBuilder: (context, index) {
               return Container(
                 key: ValueKey<String>("drag_handle_$index"),

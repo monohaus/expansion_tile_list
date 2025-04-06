@@ -109,8 +109,8 @@ enum DragHandlePlacement {
   }
 }
 
-/// Enum representing the horizontal alignment of a widget.
-enum HorizontalAlignment {
+/// Enum representing the drag handle alignment of a widget.
+enum DragHandleAlignment {
   /// Aligns to the center left of a widget with an horizontal layout.
   centerLeft(Alignment.centerLeft),
 
@@ -135,35 +135,35 @@ enum HorizontalAlignment {
   /// The alignment value of the enum.
   final Alignment alignment;
 
-  const HorizontalAlignment(this.alignment);
+  const DragHandleAlignment(this.alignment);
 
   /// Returns true if this is a left alignment.
   bool get isLeft =>
-      this == HorizontalAlignment.centerLeft ||
-      this == HorizontalAlignment.topLeft ||
-      this == HorizontalAlignment.bottomLeft;
+      this == DragHandleAlignment.centerLeft ||
+      this == DragHandleAlignment.topLeft ||
+      this == DragHandleAlignment.bottomLeft;
 
   /// Returns true if this is a right alignment.
   bool get isRight =>
-      this == HorizontalAlignment.centerRight ||
-      this == HorizontalAlignment.topRight ||
-      this == HorizontalAlignment.bottomRight;
+      this == DragHandleAlignment.centerRight ||
+      this == DragHandleAlignment.topRight ||
+      this == DragHandleAlignment.bottomRight;
 
-  /// Returns the [HorizontalAlignment] enum value from the given name.
+  /// Returns the [DragHandleAlignment] enum value from the given name.
   /// Throws an [ArgumentError] if the name is not found.
-  static HorizontalAlignment fromName(String name) {
-    return HorizontalAlignment.values.firstWhere(
+  static DragHandleAlignment fromName(String name) {
+    return DragHandleAlignment.values.firstWhere(
       (e) => e.name == name,
-      orElse: () => throw ArgumentError('No such HorizontalAlignment: $name'),
+      orElse: () => throw ArgumentError('No such DragHandleAlignment: $name'),
     );
   }
 
-  /// Returns the [HorizontalAlignment] enum value from the given index.
+  /// Returns the [DragHandleAlignment] enum value from the given index.
   /// Throws an [ArgumentError] if the index is not found.
-  static HorizontalAlignment fromIndex(int index) {
-    return HorizontalAlignment.values.firstWhere(
+  static DragHandleAlignment fromIndex(int index) {
+    return DragHandleAlignment.values.firstWhere(
       (e) => e.index == index,
-      orElse: () => throw ArgumentError('No such HorizontalAlignment: $index'),
+      orElse: () => throw ArgumentError('No such DragHandleAlignment: $index'),
     );
   }
 }
@@ -236,7 +236,7 @@ class ExpansionTileList extends StatefulWidget {
         enableDefaultDragHandles = false,
         useDelayedDrag = false,
         dragHandlePlacement = DragHandlePlacement.none,
-        dragHandleAlignment = HorizontalAlignment.centerLeft,
+        dragHandleAlignment = DragHandleAlignment.centerLeft,
         dragHandleBuilder = null,
         anchor = 0.0,
         autoScrollerVelocityScalar = null;
@@ -290,7 +290,7 @@ class ExpansionTileList extends StatefulWidget {
     this.enableDefaultDragHandles = true,
     this.useDelayedDrag = false,
     this.dragHandlePlacement = DragHandlePlacement.none,
-    this.dragHandleAlignment = HorizontalAlignment.centerLeft,
+    this.dragHandleAlignment = DragHandleAlignment.centerLeft,
     this.dragHandleBuilder,
     this.anchor = 0.0,
     this.autoScrollerVelocityScalar,
@@ -368,7 +368,7 @@ class ExpansionTileList extends StatefulWidget {
   final DragHandlePlacement dragHandlePlacement;
 
   /// The alignment of the drag handle.
-  final HorizontalAlignment dragHandleAlignment;
+  final DragHandleAlignment dragHandleAlignment;
 
   /// A builder that can be used to customize the appearance of the drag handle.
   final NullableIndexedWidgetBuilder? dragHandleBuilder;
@@ -477,7 +477,7 @@ class ExpansionTileList extends StatefulWidget {
     ReorderItemProxyDecorator? proxyDecorator,
     bool? enableDefaultDragHandles,
     DragHandlePlacement? dragHandlePlacement,
-    HorizontalAlignment? dragHandleAlignment,
+    DragHandleAlignment? dragHandleAlignment,
     NullableIndexedWidgetBuilder? dragHandleBuilder,
     bool? useDelayedDrag,
     double? anchor,

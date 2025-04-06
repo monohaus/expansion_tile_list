@@ -182,7 +182,7 @@ class ReorderableExamples {
   static Widget buildWithDragHandleAlignment() {
     return ExpansionTileList.reorderable(
       dragHandlePlacement: DragHandlePlacement.leading,
-      dragHandleAlignment: HorizontalAlignment.centerRight,
+      dragHandleAlignment: DragHandleAlignment.centerRight,
       children: <ExpansionTile>[
         ..._buildChildren('DragHandleAlignment'),
       ],
@@ -263,7 +263,7 @@ class _AdvancedCustomDragHandleExampleState
       enableDefaultDragHandles: false,
       controller: controller,
       dragHandlePlacement: DragHandlePlacement.leading,
-      dragHandleAlignment: HorizontalAlignment.centerRight,
+      dragHandleAlignment: DragHandleAlignment.centerRight,
       dragHandleBuilder: (context, index) {
         return Container(
           padding: const EdgeInsets.all(8.0),
