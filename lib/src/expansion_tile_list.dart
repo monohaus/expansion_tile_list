@@ -213,6 +213,9 @@ class ExpansionTileList extends StatefulWidget {
     this.itemBuilder,
     this.separatorBuilder,
     this.separatorAlignment = Alignment.bottomCenter,
+    this.header,
+    this.footer,
+
     // ScrollView Specific Properties
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -268,6 +271,8 @@ class ExpansionTileList extends StatefulWidget {
     this.itemBuilder,
     this.separatorBuilder,
     this.separatorAlignment = Alignment.bottomCenter,
+    this.header,
+    this.footer,
     // ScrollView Specific Properties
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -337,6 +342,12 @@ class ExpansionTileList extends StatefulWidget {
 
   /// How to clip the scroll view's contents.
   final Clip clipBehavior;
+
+  /// The widget that is displayed at the beginning of the items of the list.
+  final Widget? header;
+
+  /// The widget that is displayed at the end of the items of the list.
+  final Widget? footer;
 
   // ReorderableListView
   /// If true, the list of tiles can be reordered by dragging and dropping.
@@ -575,15 +586,17 @@ class ExpansionTileList extends StatefulWidget {
 /// This class is private to the library as it starts with an underscore.
 class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   late ExpansionTileListController _listController;
+  //final List<ExpansionTile> _children = [];
   final List<ExpansionTileItemController> _itemControllers = [];
   final Set<int> _initialExpandedIndexes = {};
   final List<int> _positions = [];
   late final int id;
+  int _generation = 0;
 
   @override
   void initState() {
     super.initState();
-    id = Random(widget.children.length).nextInt(1000000000);
+    id = Random().nextInt(1000000000);
     _initPositions();
     _updateListController();
     _updateExpandedIndexes();
@@ -596,8 +609,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     if (widget.controller != oldWidget.controller) {
       _updateListController(oldWidget.controller);
     }
+    //Error 1
     if (widget.children != oldWidget.children ||
-        listEquals(widget.children, oldWidget.children)) {
+        !listEquals(widget.children, oldWidget.children)) {
       _initPositions(oldWidget.children);
       _updateTileControllers(oldWidget.children);
     }
@@ -606,16 +620,18 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
             widget.initialExpandedIndexes, oldWidget.initialExpandedIndexes) ||
         !listEquals(widget.children, oldWidget.children)) {
       _updateExpandedIndexes();
+      //Error 6
+      final gen = ++_generation;
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_generation != gen) return;
         _initExpansionMode();
       });
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
+        _initExpansionMode();
+      });*/
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
 
   void _initPositions([List<Widget>? oldChildren]) {
     if (oldChildren != null &&
@@ -689,15 +705,84 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   }
 
   Widget _buildList(BuildContext context) {
+    final headerOffset = widget.header != null ? 1 : 0;
+    final footerOffset = widget.footer != null ? 1 : 0;
+    final itemCount = widget.children.length + headerOffset + footerOffset;
+
+    if (widget.separatorBuilder != null || widget.itemGapSize > 0.0) {
+      return ListView.separated(
+        itemCount: itemCount,
+        itemBuilder: (context, index) {
+          final headerFooter = _buildHeaderFooter(context, index, itemCount);
+          if (headerFooter != null) return headerFooter;
+          final childIndex = index - headerOffset;
+          return _buildChild(context, childIndex,
+              key: PageStorageKey(".item.$id.$childIndex"),
+              skipSeparatorGap: true);
+        },
+        separatorBuilder: (context, index) {
+          if ((index == 0 && widget.header != null) ||
+              (index >= itemCount - 2 && widget.footer != null)) {
+            return const SizedBox.shrink();
+          }
+          return _buildSeparatorGap(context, index - headerOffset);
+        },
+        scrollDirection: widget.scrollDirection,
+        reverse: widget.reverse,
+        controller: widget.scrollController,
+        primary: widget.primary,
+        physics: widget.physics,
+        shrinkWrap: widget.shrinkWrap,
+        padding: widget.padding,
+        cacheExtent: widget.cacheExtent,
+        dragStartBehavior: widget.dragStartBehavior,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        restorationId: widget.restorationId,
+        clipBehavior: widget.clipBehavior,
+      );
+    }
+    return ListView.builder(
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        final headerFooter = _buildHeaderFooter(context, index, itemCount);
+        if (headerFooter != null) return headerFooter;
+        final childIndex = index - headerOffset;
+        return _buildChild(context, childIndex,
+            key: PageStorageKey(".item.$id.$childIndex"));
+      },
+      scrollDirection: widget.scrollDirection,
+      reverse: widget.reverse,
+      controller: widget.scrollController,
+      primary: widget.primary,
+      physics: widget.physics,
+      shrinkWrap: widget.shrinkWrap,
+      padding: widget.padding,
+      cacheExtent: widget.cacheExtent,
+      dragStartBehavior: widget.dragStartBehavior,
+      keyboardDismissBehavior: widget.keyboardDismissBehavior,
+      restorationId: widget.restorationId,
+      clipBehavior: widget.clipBehavior,
+    );
+  }
+
+ /* Widget _buildListx(BuildContext context) {
     if (widget.separatorBuilder != null || widget.itemGapSize > 0.0) {
       return ListView.separated(
         itemCount: widget.children.length,
         itemBuilder: (context, index) {
-          return _buildChild(context, index,
-              key: PageStorageKey(".item.$id.$index"),
-              renderSeparatorGap: false);
+          final headerFooter = _buildHeaderFooter(context, index);
+          index -= widget.header != null ? 1 : 0;
+          return headerFooter ??
+              _buildChild(context, index,
+                  key: PageStorageKey(".item.$id.$index"),
+                  skipSeparatorGap: true);
         },
         separatorBuilder: (context, index) {
+          if ((index == 0 && widget.header != null) ||
+              (index >= widget.children.length - 2 && widget.footer != null)) {
+            //or -1
+            return const SizedBox.shrink();
+          }
           return _buildSeparatorGap(context, index);
         },
         scrollDirection: widget.scrollDirection,
@@ -717,8 +802,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     return ListView.builder(
       itemCount: widget.children.length,
       itemBuilder: (context, index) {
-        return _buildChild(context, index,
-            key: PageStorageKey(".item.$id.$index"));
+        return _buildHeaderFooter(context, index) ??
+            _buildChild(context, index -= widget.header != null ? 1 : 0,
+                key: PageStorageKey(".item.$id.$index"));
       },
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
@@ -733,7 +819,7 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
       restorationId: widget.restorationId,
       clipBehavior: widget.clipBehavior,
     );
-  }
+  }*/
 
   Widget _buildReorderableList(BuildContext context) {
     return ReorderableListView.builder(
@@ -764,6 +850,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
                       .call(child, index, animation);
                 }
               : widget.proxyDecorator,
+      header: widget.header,
+      footer: widget.footer,
+      //
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
       scrollController: widget.scrollController,
@@ -785,15 +874,35 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
     );
   }
 
+  Widget? _buildHeaderFooter(BuildContext context, int index, int itemCount) {
+    if (index == 0 && widget.header != null) {
+      return widget.header;
+    } else if (index == itemCount - 1 && widget.footer != null) {
+      return widget.footer;
+    }
+    return null;
+  }
+
+  /*Widget? _buildHeaderFooter(BuildContext context, int index) {
+    if (index == 0 && widget.header != null) {
+      return widget.header;
+    } else if (index == widget.children.length - 1 && widget.footer != null) {
+      return widget.footer;
+    }
+    return null;
+    //index -= widget.header != null ? 1 : 0;
+  }*/
+
   Widget _buildChild(BuildContext context, int index,
-      {Key? key, bool renderSeparatorGap = true}) {
+      {Key? key, bool skipSeparatorGap = false}) {
     return Column(
       key: key,
+      //mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         widget.itemBuilder?.call(
                 context, index, _buildExpansionTileItem(context, index)) ??
             _buildExpansionTileItem(context, index),
-        if (renderSeparatorGap &&
+        if (!skipSeparatorGap &&
             index < widget.children.length - 1 &&
             (widget.itemGapSize > 0.0 || widget.separatorBuilder != null))
           _buildSeparatorGap(context, index),
@@ -970,6 +1079,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   /// [index] is the index of the tile in the list.
   /// [isExpanded] is the new expansion state of the tile.
   void _onExpansionChanged(int index, bool isExpanded) {
+    if (index < 0 || index >= _positions.length) {
+      return;
+    }
     var i = _positions[index];
     Future.microtask(() {
       return _updateExpansionMode(index, isExpanded);
@@ -990,6 +1102,10 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   /// If the combination is empty, no tiles are initially expanded for [ExpansionMode.atMostOne] and [ExpansionMode.any].
   /// If the combination is empty, the first tile is initially expanded for [ExpansionMode.exactlyOne] and [ExpansionMode.atLeastOne].
   void _updateExpandedIndexes() {
+    if (widget.children.isEmpty) {
+      _initialExpandedIndexes.clear();
+      return;
+    }
     var initialExpandedIndexes = {
       ...{...widget.initialExpandedIndexes}
           .where((index) => index >= 0 && index < widget.children.length),
@@ -1020,6 +1136,10 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   }
 
   void _initExpansionMode() {
+    //Error 2
+    if (_positions.isEmpty || _itemControllers.isEmpty) {
+      return;
+    }
     final expandedIndexes = _itemControllers.indexed
         .where((value) => value.$2.mounted && value.$2.isExpanded)
         .map((value) => value.$1);
@@ -1027,6 +1147,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
       var index = _initialExpandedIndexes.isNotEmpty
           ? _initialExpandedIndexes.first
           : 0;
+      if (index >= _positions.length) {
+        return;
+      }
       _updateExpansionMode(index, true);
       return;
     }
@@ -1051,6 +1174,9 @@ class _ExpansionTileListState<T extends ExpansionTileList> extends State<T> {
   /// @param isExpanded The new expansion state of the tile.
   /// @return The index of the tile that was expanded or collapsed else -1 if the expansion mode rejects the expanded state.
   int _updateExpansionMode(int index, bool isExpanded) {
+    if (index < 0 || index >= _positions.length) {
+      return -1;
+    }
     index = _positions[index];
 
     switch (widget.expansionMode) {
@@ -1319,7 +1445,7 @@ class ExpansionTileListController {
         dev.log("ItemController is not mounted",
             name: "ExpansionTileListController");
         if (!safeMode) {
-          StateError(
+          throw StateError(
             "ItemController is not mounted, possibly because the widget has been disposed or not yet initialized",
           );
         }

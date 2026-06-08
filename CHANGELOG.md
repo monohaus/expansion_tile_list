@@ -80,3 +80,12 @@
 - Final release of 2.0.0
 - Bug fix: Reorder positions duplicated indexes on hot reload
 - Documentation update
+
+## 2.1.0
+
+- Added `header` and `footer` properties to display widgets at the beginning and end of the list.
+- Bug fix: children update detection was inverted causing unnecessary re-initialization on every rebuild.
+- Bug fix: bound check guards prevent crashes when a children list is empty or indexes are out of range. ([#4](https://github.com/monohaus/expansion_tile_list/issues/4) by [@doersoul](https://github.com/doersoul))
+- Bug fix: `ExpansionTileListController` now correctly throws `StateError` for unmounted item controllers.
+- Bug fix: stale post-frame callbacks no longer fire when `didUpdateWidget` is called multiple times before a frame.
+- Documentation update

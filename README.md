@@ -24,6 +24,7 @@ their expansion programmatically.
 - [Usage](#usage)
     - [Basic](#basic)
     - [Separator And Gap](#separator-and-gap)
+    - [Header And Footer](#header-and-footer)
     - [Controller](#controller)
     - [ExpansionMode](#expansionmode)
     - [ExpansionTileItem](#expansiontileitem)
@@ -90,11 +91,13 @@ All the features affects all the tiles in the `ExpansionTileList`.
     - `ExpansionMode.any` allows you to expand any number of tiles. (i.e. zero or more )
 - `separatorAlignment` allows you to specify the alignment of the `separator` against the space `itemGapSize` between
   the tiles in the `ExpansionTileList`
-- ![new](https://img.shields.io/badge/new-brightgreen) `ExpansionTileList.reorderable` enable the list to be reorderable
+- ![new](https://img.shields.io/badge/new-brightgreen) `header` allows you to specify a widget displayed at the beginning of the list.
+- ![new](https://img.shields.io/badge/new-brightgreen) `footer` allows you to specify a widget displayed at the end of the list.
+- `ExpansionTileList.reorderable` enable the list to be reorderable
   by dragging the items.
-- ![new](https://img.shields.io/badge/new-brightgreen) Reorderable callbacks e.g `canReorder` `onReorder` allows you to
+-  Reorderable callbacks e.g `canReorder` `onReorder` allows you to
   specify a callback to control the behavior of the list item reordering.
-- ![new](https://img.shields.io/badge/new-brightgreen) `dragHandleBuilder` allows you to customize the appearance of the
+- `dragHandleBuilder` allows you to customize the appearance of the
   drag handle for the reorderable list.
 
 ### `Item Features`
@@ -304,6 +307,33 @@ ExpansionTileList(
 
 var expansionTileList = ExpansionTileList(
   separatorAlignment: Alignment.topCenter, // defaults to Alignment.bottomCenter if not specified
+  children: <ExpansionTile>[
+    ExpansionTile(
+      title: Text('Tile 1'),
+      children: <Widget>[Text('Child 1')],
+    ),
+    ExpansionTile(
+      title: Text('Tile 2'),
+      children: <Widget>[Text('Child 2')],
+    ),
+  ],
+);
+```
+
+### Header And Footer
+
+* Using `header` and `footer`: Use the `header` and `footer` properties to add widgets before and after the list items.
+
+```dart
+var expansionTileList = ExpansionTileList(
+  header: Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Text('List Header', style: TextStyle(fontWeight: FontWeight.bold)),
+  ),
+  footer: Padding(
+    padding: EdgeInsets.all(16.0),
+    child: Text('List Footer'),
+  ),
   children: <ExpansionTile>[
     ExpansionTile(
       title: Text('Tile 1'),
@@ -1029,6 +1059,8 @@ _() {
 | `initialExpandedIndexes`  | The indexes of the tiles that are initially expanded.                                                                    | `const <int>[]`          |
 | `expansionMode`           | The expansion mode of the `ExpansionTileList`.                                                                           | `ExpansionMode.any`      |
 | `separatorAlignment`      | The alignment of the separator widget in relation to the space `itemGapSize` between items                               | `Alignment.bottomCenter` |
+| `header`                  | The widget displayed at the beginning of the items in the list.                                                          | `null`                   |
+| `footer`                  | The widget displayed at the end of the items in the list.                                                                | `null`                   |
 
 ## Scrollable Properties
 
